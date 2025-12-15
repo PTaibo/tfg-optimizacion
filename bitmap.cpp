@@ -38,6 +38,9 @@ BitMap::~BitMap() {}
 // SINGLE BIT OPERATIONS
 int8_t BitMap::getBit(size_t idx)
 {
+    if (idx >= _size)
+        return -1;
+
     size_t el = idx / word_s;
     size_t bit = word_s - (idx % word_s);
     word_t mask = 1 << ((word_s-1) - bit); // Mask with 1 in pos bit
@@ -45,21 +48,29 @@ int8_t BitMap::getBit(size_t idx)
     return (_bits[el] & mask) ? 1 : 0;
 }
 
-void BitMap::setBit(size_t idx)
+int8_t BitMap::setBit(size_t idx)
 {
+    if (idx >= _size)
+        return 0;
+
     size_t word = idx / word_s;
     size_t bit = word_s - (idx % word_s);
     word_t mask = 1 << ((word_s-1) - bit); // Mask with 1 in pos bit
     _bits[word] = _bits[word] | mask;
+    return 1;
 }
 
-void BitMap::clearBit(size_t idx)
+int8_t BitMap::clearBit(size_t idx)
 {
+    if (idx >= _size)
+        return 0;
+
     size_t word = idx / word_s;
     size_t bit = word_s - (idx % word_s);
     word_t mask = 1 << ((word_s-1) - bit); // Mask with 1 in pos bit
     mask = ~mask;
     _bits[word] = _bits[word] & mask;
+    return 1;
 }
 
 int8_t BitMap::toggleBit(size_t idx)
@@ -71,6 +82,7 @@ int8_t BitMap::toggleBit(size_t idx)
     size_t bit = word_s - (idx % word_s);
     word_t mask = 1 << ((word_s-1) - bit); // Mask with 1 in pos bit
     _bits[word] = _bits[word] ^ mask;
+    return (_bits[word] & mask) ? 1 : 0;
 }
 
 // VECTOR OPERATIONS

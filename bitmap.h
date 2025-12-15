@@ -33,17 +33,19 @@ class BitMap
 
         // SINGLE BIT OPERATIONS
         // @param Position between 0 and size() - 1
-        // @return Value of bit
+        // @return Value of bit or -1 if out of bounds
         int8_t getBit(size_t idx);
         // @brief Sets bit to 1
         // @param Position between 0 and size() - 1
-        void setBit(size_t idx);
+        // @return 0 if out of bounds (error)
+        int8_t setBit(size_t idx);
         // @brief Sets bit to 0
         // @param Position between 0 and size() - 1
-        void clearBit(size_t idx);
+        // @return 0 if out of bounds (error)
+        int8_t clearBit(size_t idx);
         // @brief Toggles bit
         // @brief Position between 0 and size() - 1
-        // @return New value of bit
+        // @return New value of bit or -1 if out of bounds
         int8_t toggleBit(size_t idx);
 
         // VECTOR OPERATIONS
