@@ -6,7 +6,7 @@
 
 #include "utils.h"
 
-void test(std::string msg, bool correct)
+void test(std::string msg, bool correct, BitMap& vBits)
 {
     std::string dots (30-msg.size(), '.');
     std::cout << msg << dots;
@@ -16,6 +16,7 @@ void test(std::string msg, bool correct)
     else {
         std::cout << GREEN << "OK\n" << RESET_CLR;
     }
+    vBits.print();
 }
 
 int main (void)
@@ -24,57 +25,72 @@ int main (void)
     std::string bits = "01001101001101011000";
 
     // Constructor tests
+    std::cout << "CONSTRUCTOR TEST" << "\n";
     BitMap zeros(5);
+    std::cout << "Size constructor (5): ";
     zeros.print();
     BitMap copy(zeros);
+    std::cout << "Copy constructor from previous: ";
     copy.print();
     BitMap vBits(bits);
+    std::cout << "String: " << bits << "\n";
+    std::cout << "Copy from string: ";
     vBits.print();
+    std::cout << "------------------------" << "\n";
 
     // Size test
+    std::cout << "SIZE TEST" << "\n";
     std::cout << "Size of bitmap: " << vBits.size() << " | "
               << "Number of bits: " << bits.size() << "\n";
-    test("Size()",
-         vBits.size() == bits.size());
+    test("Size()", vBits.size() == bits.size(), vBits);
+    std::cout << "------------------------" << "\n";
 
     // Get test
+    std::cout << "GET TEST" << "\n";
     testBit = 15;
-    std::cout << "Bit " << testBit << " of bitmap: " << vBits.getBit(testBit) << " | "
-              << "Original bit " << testBit << ": " << bits[testBit]-'0' << "\n";
+    printf("Bit %d of bitmap: %d | Original bit %d: %c\n", testBit, vBits.get(testBit), testBit, bits[testBit]);
     vBits.print();
     std::cout << bits << " <- string\n";
-    test("Get()", vBits.getBit(testBit) == bits[testBit] - '0');
-    test("Direct get()", vBits.getBit(testBit) == 1);
-    test("Get() out of bounds", vBits.getBit(100) == -1);
+    test("Get()", vBits.get(testBit) == bits[testBit] - '0', vBits);
+    test("Direct get()", vBits.get(testBit) == 1, vBits);
+    test("Get() out of bounds", vBits.get(100) == -1, vBits);
+    std::cout << "------------------------" << "\n";
 
     // Set test
+    std::cout << "SET TEST" << "\n";
     testBit = 2;
-    assert(vBits.getBit(testBit) == 0);
-    assert(vBits.setBit(testBit) == 1);
-    test("Set()", vBits.getBit(testBit) == 1);
-    assert(vBits.setBit(testBit) == 1);
-    test("Double set()", vBits.getBit(testBit) == 1);
-    test("Set() out of bounds", vBits.setBit(100) == 0);
+    assert(vBits.get(testBit) == 0);
+    assert(vBits.set(testBit) == 1);
+    vBits.print();
+    test("Set()", vBits.get(testBit) == 1, vBits);
+    assert(vBits.set(testBit) == 1);
+    test("Double set()", vBits.get(testBit) == 1, vBits);
+    test("Set() out of bounds", vBits.set(100) == 0, vBits);
+    std::cout << "------------------------" << "\n";
 
     // Clear test
+    std::cout << "CLEAR TEST" << "\n";
     testBit = 2;
-    vBits.setBit(testBit);
-    assert(vBits.getBit(testBit) == 1);
-    assert(vBits.clearBit(testBit) == 1);
-    test("Clear()", vBits.getBit(testBit) == 0);
-    assert(vBits.clearBit(testBit) == 1);
-    test("Double clear()", vBits.getBit(testBit) == 0);
-    test("Clear() out of bounds", vBits.clearBit(100) == 0);
+    vBits.set(testBit);
+    assert(vBits.get(testBit) == 1);
+    assert(vBits.clear(testBit) == 1);
+    test("Clear()", vBits.get(testBit) == 0, vBits);
+    assert(vBits.clear(testBit) == 1);
+    test("Double clear()", vBits.get(testBit) == 0, vBits);
+    test("Clear() out of bounds", vBits.clear(100) == 0, vBits);
+    std::cout << "------------------------" << "\n";
 
     // Toggle test
+    std::cout << "TOGGLE TEST" << "\n";
     testBit = 2;
-    assert(vBits.setBit(testBit) == 1);
-    assert(vBits.getBit(testBit) == 1);
-    test("Toggle() output", vBits.toggleBit(testBit) == 0);
-    test("Toggle()", vBits.getBit(testBit) == 0);
-    test("Toggle() output", vBits.toggleBit(testBit) == 1);
-    test("Toggle()", vBits.getBit(testBit) == 1);
-    test("Toggle() out of bounds", vBits.toggleBit(100) == -1);
+    assert(vBits.set(testBit) == 1);
+    assert(vBits.get(testBit) == 1);
+    test("Toggle() output", vBits.toggle(testBit) == 0, vBits);
+    test("Toggle()", vBits.get(testBit) == 0, vBits);
+    test("Toggle() output", vBits.toggle(testBit) == 1, vBits);
+    test("Toggle()", vBits.get(testBit) == 1, vBits);
+    test("Toggle() out of bounds", vBits.toggle(100) == -1, vBits);
+    std::cout << "------------------------" << "\n";
 
     return 0;
 }

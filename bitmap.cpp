@@ -1,9 +1,9 @@
 #include "bitmap.h"
 
-#include <iostream>
 #include <assert.h>
 
 // CONSTRUCTORS AND DESTRUCTORS
+
 BitMap::BitMap(size_t size)
 {
     _size = size;
@@ -12,6 +12,7 @@ BitMap::BitMap(size_t size)
         _bits.push_back(0);
     }
 }
+
 BitMap::BitMap(std::string bits)
 {
     _size = bits.size();
@@ -20,9 +21,9 @@ BitMap::BitMap(std::string bits)
         _bits.push_back(0);
     }
 
-    for(int i = 0; i < bits.size(); i++) {
-        if (bits[i] == 1) {
-            setBit(i);
+    for(size_t i = 0; i < bits.size(); i++) {
+        if (bits[i] == '1') {
+            set(i);
         }
     }
 }
@@ -35,52 +36,54 @@ BitMap::BitMap(const BitMap& bitmap)
 
 BitMap::~BitMap() {}
 
+BitMap::word_t BitMap::getMask(size_t idx)
+{
+    size_t msb = word_s - 1;
+    size_t bit = msb - (idx % word_s);
+    return 1 << bit; // Mask with 1 in pos bit
+}
+
 // SINGLE BIT OPERATIONS
-int8_t BitMap::getBit(size_t idx)
+int8_t BitMap::get(size_t idx)
 {
     if (idx >= _size)
         return -1;
 
-    size_t el = idx / word_s;
-    size_t bit = word_s - (idx % word_s);
-    word_t mask = 1 << ((word_s-1) - bit); // Mask with 1 in pos bit
-
-    return (_bits[el] & mask) ? 1 : 0;
+    size_t word = idx / word_s;
+    word_t mask = getMask(idx);
+    return (_bits[word] & mask) ? 1 : 0;
 }
 
-int8_t BitMap::setBit(size_t idx)
+int8_t BitMap::set(size_t idx)
 {
     if (idx >= _size)
         return 0;
 
     size_t word = idx / word_s;
-    size_t bit = word_s - (idx % word_s);
-    word_t mask = 1 << ((word_s-1) - bit); // Mask with 1 in pos bit
+    word_t mask = getMask(idx);
     _bits[word] = _bits[word] | mask;
     return 1;
 }
 
-int8_t BitMap::clearBit(size_t idx)
+int8_t BitMap::clear(size_t idx)
 {
     if (idx >= _size)
         return 0;
 
     size_t word = idx / word_s;
-    size_t bit = word_s - (idx % word_s);
-    word_t mask = 1 << ((word_s-1) - bit); // Mask with 1 in pos bit
+    word_t mask = getMask(idx);
     mask = ~mask;
     _bits[word] = _bits[word] & mask;
     return 1;
 }
 
-int8_t BitMap::toggleBit(size_t idx)
+int8_t BitMap::toggle(size_t idx)
 {
     if (idx >= _size)
         return -1;
 
     size_t word = idx / word_s;
-    size_t bit = word_s - (idx % word_s);
-    word_t mask = 1 << ((word_s-1) - bit); // Mask with 1 in pos bit
+    word_t mask = getMask(idx);
     _bits[word] = _bits[word] ^ mask;
     return (_bits[word] & mask) ? 1 : 0;
 }
@@ -97,12 +100,9 @@ size_t BitMap::size()
 
 void BitMap::print()
 {
-    for (int i = 0; i < _bits.size()-1; i++) {
-        std::cout << _bits[i];
+    for (size_t i = 0; i < _size; i++) {
+        printf("%d", get(i));
     }
-    for (int i = (_bits.size()-1)*word_s; i < _size; i++) {
-        std::cout << getBit(i);
-    }
-    std::cout << "\n";
+    printf("\n");
 }
 

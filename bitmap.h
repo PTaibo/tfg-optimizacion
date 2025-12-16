@@ -18,6 +18,11 @@ class BitMap
         std::vector<word_t> _bits; //!< Bit vector
 
     // METHODS
+    private:
+        // @param idx Bit position between 0 and _size-1
+        // @return Word mask for the bit in that position
+        word_t getMask(size_t idx);
+
     public:
         // CONSTRUCTORS AND DESTRUCTORS
         // @param size Size of bitmap in bits
@@ -32,23 +37,23 @@ class BitMap
         ~BitMap();
 
         // SINGLE BIT OPERATIONS
-        // @param Position between 0 and size() - 1
+        // @param idx Position between 0 and size()-1
         // @return Value of bit or -1 if out of bounds
-        int8_t getBit(size_t idx);
+        int8_t get(size_t idx);
         // @brief Sets bit to 1
-        // @param Position between 0 and size() - 1
+        // @param idx Position between 0 and size()-1
         // @return 0 if out of bounds (error)
-        int8_t setBit(size_t idx);
+        int8_t set(size_t idx);
         // @brief Sets bit to 0
-        // @param Position between 0 and size() - 1
+        // @param idx Position between 0 and size()-1
         // @return 0 if out of bounds (error)
-        int8_t clearBit(size_t idx);
+        int8_t clear(size_t idx);
         // @brief Toggles bit
-        // @brief Position between 0 and size() - 1
+        // @param idx Position between 0 and size()-1
         // @return New value of bit or -1 if out of bounds
-        int8_t toggleBit(size_t idx);
+        int8_t toggle(size_t idx);
 
-        // VECTOR OPERATIONS
+        // BASIC VECTOR OPERATIONS
         bool isEmpty();
         // @return The size of the bitmap in bits
         size_t size();
