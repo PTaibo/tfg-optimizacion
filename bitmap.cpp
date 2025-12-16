@@ -88,6 +88,25 @@ int8_t BitMap::toggle(size_t idx)
     return (_bits[word] & mask) ? 1 : 0;
 }
 
+void BitMap::push_back(int8_t bit)
+{
+    _size++;
+    if (_size % word_s == 0) {
+        _bits.push_back(0);
+    }
+    if (bit == 1) {
+        set(_size-1);
+    }
+}
+
+void BitMap::pop_back()
+{
+    if (_size % word_s == 0) {
+        _bits.pop_back();
+    }
+    _size--;
+}
+
 // VECTOR OPERATIONS
 bool BitMap::isEmpty()
 {

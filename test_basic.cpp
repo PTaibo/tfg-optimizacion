@@ -29,13 +29,13 @@ int main (void)
     BitMap zeros(5);
     std::cout << "Size constructor (5): ";
     zeros.print();
-    BitMap copy(zeros);
-    std::cout << "Copy constructor from previous: ";
-    copy.print();
     BitMap vBits(bits);
     std::cout << "String: " << bits << "\n";
     std::cout << "Copy from string: ";
     vBits.print();
+    BitMap copy(vBits);
+    std::cout << "Copy constructor from previous: ";
+    copy.print();
     std::cout << "------------------------" << "\n";
 
     // Size test
@@ -91,6 +91,25 @@ int main (void)
     test("Toggle()", vBits.get(testBit) == 1, vBits);
     test("Toggle() out of bounds", vBits.toggle(100) == -1, vBits);
     std::cout << "------------------------" << "\n";
+
+    // Push-back test
+    std::cout << "PUSH-BACK TEST\n";
+    vBits.print();
+    size_t oSize = vBits.size();
+    vBits.push_back(0);
+    test("push_back(0)", oSize + 1 == vBits.size(), vBits);
+    oSize = vBits.size();
+    vBits.push_back(1);
+    test("push_back(1)", vBits.size() == oSize+1, vBits);
+    std::cout << "------------------------" << "\n";
+
+    // Pop-back test
+    std::cout << "POP-BACK TEST" << "\n";
+    vBits.print();
+    oSize = vBits.size();
+    vBits.pop_back();
+    test("pop_back()", vBits.size() == oSize-1, vBits);
+    std::cout << "-----------------------------------\n";
 
     return 0;
 }
