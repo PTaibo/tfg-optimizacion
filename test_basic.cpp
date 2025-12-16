@@ -6,12 +6,17 @@
 
 #include "utils.h"
 
+int failed = 0;
+int tests = 0;
+
 void test(std::string msg, bool correct, BitMap& vBits)
 {
+    tests++;
     std::string dots (30-msg.size(), '.');
     std::cout << msg << dots;
     if (!correct) {
         std::cout << RED << "FAILED\n" << RESET_CLR;
+        failed++;
     }
     else {
         std::cout << GREEN << "OK\n" << RESET_CLR;
@@ -22,6 +27,8 @@ void test(std::string msg, bool correct, BitMap& vBits)
 int main (void)
 {
     int8_t testBit;
+    failed = 0;
+    tests = 0;
     std::string bits = "01001101001101011000";
 
     // Constructor tests
@@ -110,6 +117,13 @@ int main (void)
     vBits.pop_back();
     test("pop_back()", vBits.size() == oSize-1, vBits);
     std::cout << "-----------------------------------\n";
+
+    if (!failed) {
+        std::cout << GREEN << "PASSED ALL TESTS" << RESET_CLR << "\n";
+    }
+    else {
+        std::cout << RED << "Failed " << failed << "/" << tests << " tests" << "\n";
+    }
 
     return 0;
 }
