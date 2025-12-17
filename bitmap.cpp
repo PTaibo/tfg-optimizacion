@@ -4,6 +4,11 @@
 
 // CONSTRUCTORS AND DESTRUCTORS
 
+BitMap::BitMap()
+{
+    _size = 0;
+}
+
 BitMap::BitMap(size_t size)
 {
     _size = size;
