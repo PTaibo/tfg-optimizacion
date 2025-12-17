@@ -66,5 +66,6 @@ class BitMap
         size_t size();
         // @brief Prints bitmap to standard output
         void print();
-        // void clear();
+        // @return Bitmap as string of 0s and 1s
+        std::string toString();
 };

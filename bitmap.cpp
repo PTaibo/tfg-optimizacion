@@ -130,3 +130,12 @@ void BitMap::print()
     printf("\n");
 }
 
+std::string BitMap::toString()
+{
+    std::string bitmap;
+    for (int i = 0; i < _size; i++) {
+        bitmap.push_back(get(i) + '0');
+    }
+    return bitmap;
+}
+

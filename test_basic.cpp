@@ -183,6 +183,15 @@ void test_pop_back()
     std::cout << "-----------------------------------\n";
 }
 
+void test_toString()
+{
+    std::string original = "01001101001101011000";
+    BitMap bitmap(original);
+    std::string result = bitmap.toString();
+    test("toString()", original == result);
+    std::cout << "-----------------------------------\n";
+}
+
 int main (void)
 {
     failed = 0;
@@ -197,9 +206,10 @@ int main (void)
     test_set();
     test_clear();
     test_toggle();
-
     test_push_back();
     test_pop_back();
+
+    test_toString();
 
     if (!failed) {
         std::cout << GREEN << "PASSED ALL TESTS" << RESET_CLR << "\n";
