@@ -43,15 +43,15 @@ class BitMap
         // @return Value of bit or -1 if out of bounds
         int8_t get(size_t idx);
         // @brief Sets bit to 1
-        // @param idx Position between 0 and size() - 1
+        // @param idx Position between 0 and size()-1
         // @return 0 if out of bounds (error)
         int8_t set(size_t idx);
         // @brief Sets bit to 0
-        // @param idx Position between 0 and size() - 1
+        // @param idx Position between 0 and size()-1
         // @return 0 if out of bounds (error)
         int8_t clear(size_t idx);
         // @brief Toggles bit
-        // @param idx Position between 0 and size() - 1
+        // @param idx Position between 0 and size()-1
         // @return New value of bit or -1 if out of bounds
         int8_t toggle(size_t idx);
         // @brief Appends a bit at the end of the bitmap
@@ -59,6 +59,11 @@ class BitMap
         void push_back(int8_t bit);
         // @brief Removes a bit from the end of the bitmap
         void pop_back();
+
+        // BITMAP OPERATIONS
+        // @param idx Position between 0 and size()-1
+        // @return Number of ones up to that idx (included)
+        ulong rank(size_t idx);
 
         // BASIC VECTOR OPERATIONS
         bool isEmpty();
