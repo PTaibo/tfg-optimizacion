@@ -48,8 +48,7 @@ void test_constructor_zeros()
         }
     }
     test("Zero constructor", size && all0);
-    std::cout << "  ";
-    zeros.print();
+    std::cout << "  " << zeros.toString() << " <- bitmap\n";
     test("  Size()", size);
     test("  Initialized correctly", all0);
     std::cout << "-----------------------------------\n";
@@ -71,8 +70,7 @@ void test_constructor_str()
 
     test("String constructor", size && sameBits);
     std::cout << "  " << bits << " <- string" << "\n";
-    std::cout << "  ";
-    vBits.print();
+    std::cout << "  " << vBits.toString() << " <- bitmap\n";
     test("  Size()", size);
     test("  Initialized correctly", sameBits);
     std::cout << "-----------------------------------\n";
@@ -92,10 +90,8 @@ void test_constructor_copy()
     }
 
     test("Copy constructor", size && sameBits);
-    std::cout << "  orig ->";
-    original.print();
-    std::cout << "  copy ->";
-    copy.print();
+    std::cout << "  " << original.toString() << " <- original\n";
+    std::cout << "  " << copy.toString() << " <- copy\n";
     test("  Size()", size);
     test("  Initialized correctly", sameBits);
     std::cout << "------------------------" << "\n";
@@ -105,7 +101,7 @@ void test_get()
 {
     std::string bits = "01001101001101011000";
     BitMap bitmap(bits);
-    bitmap.print();
+    std::cout << bitmap.toString() << " <- bitmap\n";
 
     bool passed = true;
     for(size_t i = 0; i < bitmap.size(); i++) {
@@ -163,11 +159,11 @@ void test_push_back()
     test("push_back(0)", bitmap.size() == 1 && bitmap.get(0) == 0);
     bitmap.push_back(1);
     test("push_back(1)", bitmap.size() == 2 && bitmap.get(1) == 1);
-    bitmap.print();
+    std::cout << bitmap.toString() << " <- result\n";
     BitMap bitmap2(8);
     bitmap2.push_back(1);
     test("push_back() new word", bitmap2.size() == 9 && bitmap2.get(8) == 1);
-    bitmap2.print();
+    std::cout << bitmap2.toString() << " <- result\n";
     std::cout << "------------------------" << "\n";
 }
 

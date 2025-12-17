@@ -122,14 +122,6 @@ size_t BitMap::size()
     return _size;
 }
 
-void BitMap::print()
-{
-    for (size_t i = 0; i < _size; i++) {
-        printf("%d", get(i));
-    }
-    printf("\n");
-}
-
 std::string BitMap::toString()
 {
     std::string bitmap;
