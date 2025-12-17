@@ -9,7 +9,7 @@
 int failed = 0;
 int tests = 0;
 
-void test(std::string msg, bool correct, BitMap& vBits)
+void test(std::string msg, bool correct)
 {
     tests++;
     std::string dots (30-msg.size(), '.');
@@ -21,102 +21,185 @@ void test(std::string msg, bool correct, BitMap& vBits)
     else {
         std::cout << GREEN << "OK\n" << RESET_CLR;
     }
+}
+
+void test_constructor_empty()
+{
+    BitMap empty;
+    bool size = (empty.size() == 0);
+    bool noEl = (empty.get(0) == -1);
+    test("Empty constructor", size && empty.isEmpty() && noEl);
+    test("  Size 0", size);
+    test("  Is empty", empty.isEmpty());
+    test("  No elements", noEl);
+    std::cout << "-----------------------------------\n";
+}
+
+void test_constructor_zeros()
+{
+    BitMap zeros(5);
+    assert(!zeros.isEmpty());
+    bool size = (zeros.size() == 5);
+    bool all0 = true;
+    for (size_t i = 0; i < zeros.size(); i++) {
+        if (zeros.get(i) != 0) {
+            all0 = false;
+            break;
+        }
+    }
+    test("Zero constructor", size && all0);
+    std::cout << "  ";
+    zeros.print();
+    test("  Size()", size);
+    test("  Initialized correctly", all0);
+    std::cout << "-----------------------------------\n";
+}
+
+void test_constructor_str()
+{
+    std::string bits = "01001101001101011000";
+    BitMap vBits(bits);
+    assert(!vBits.isEmpty());
+    bool size = (bits.size() == vBits.size());
+    bool sameBits = true;
+    for (size_t i = 0; i < vBits.size() && i < bits.size(); i++) {
+        if (bits[i] - '0' != vBits.get(i)) {
+            sameBits = false;
+            break;
+        }
+    }
+
+    test("String constructor", size && sameBits);
+    std::cout << "  " << bits << " <- string" << "\n";
+    std::cout << "  ";
     vBits.print();
+    test("  Size()", size);
+    test("  Initialized correctly", sameBits);
+    std::cout << "-----------------------------------\n";
+}
+
+void test_constructor_copy()
+{
+    BitMap original("01001110101");
+    BitMap copy(original);
+    bool size = (original.size() == copy.size());
+    bool sameBits = true;
+    for (size_t i = 0; i < original.size() && i < copy.size(); i++) {
+        if (copy.get(i) != original.get(i)) {
+            sameBits = false;
+            break;
+        }
+    }
+
+    test("Copy constructor", size && sameBits);
+    std::cout << "  orig ->";
+    original.print();
+    std::cout << "  copy ->";
+    copy.print();
+    test("  Size()", size);
+    test("  Initialized correctly", sameBits);
+    std::cout << "------------------------" << "\n";
+}
+
+void test_get()
+{
+    std::string bits = "01001101001101011000";
+    BitMap bitmap(bits);
+    bitmap.print();
+
+    bool passed = true;
+    for(size_t i = 0; i < bitmap.size(); i++) {
+        int8_t bit = bitmap.get(i);
+        if (bit != bits[i] - '0') {
+            passed = false;
+        }
+        printf("%d", bit);
+    }
+    printf(" <- get()\n");
+
+    if (!failed)
+        test("Get()", passed);
+    test("Get() out of bounds", bitmap.get(100) == -1);
+    std::cout << "------------------------" << "\n";
+}
+
+void test_set()
+{
+    BitMap bitmap("0101");
+    assert(bitmap.set(0) == 1);
+    test("Set()", bitmap.get(0) == 1);
+    assert(bitmap.set(1) == 1);
+    test("Double set()", bitmap.get(1) == 1);
+    test("Set() out of bounds", bitmap.set(100) == 0);
+    std::cout << "------------------------" << "\n";
+}
+
+void test_clear()
+{
+    BitMap bitmap("0101");
+    assert(bitmap.clear(1) == 1);
+    test("Clear()", bitmap.get(1) == 0);
+    assert(bitmap.clear(0) == 1);
+    test("Double clear()", bitmap.get(0) == 0);
+    test("Clear() out of bounds", bitmap.clear(100) == 0);
+    std::cout << "------------------------" << "\n";
+}
+
+void test_toggle()
+{
+    BitMap bitmap("0101");
+    test("Toggle() output", bitmap.toggle(1) == 0);
+    test("Toggle()", bitmap.get(1) == 0);
+    test("Toggle() output", bitmap.toggle(0) == 1);
+    test("Toggle()", bitmap.get(0) == 1);
+    test("Toggle() out of bounds", bitmap.toggle(100) == -1);
+    std::cout << "------------------------" << "\n";
+}
+
+void test_push_back()
+{
+    BitMap bitmap;
+    bitmap.push_back(0);
+    test("push_back(0)", bitmap.size() == 1 && bitmap.get(0) == 0);
+    bitmap.push_back(1);
+    test("push_back(1)", bitmap.size() == 2 && bitmap.get(1) == 1);
+    bitmap.print();
+    BitMap bitmap2(8);
+    bitmap2.push_back(1);
+    test("push_back() new word", bitmap2.size() == 9 && bitmap2.get(8) == 1);
+    bitmap2.print();
+    std::cout << "------------------------" << "\n";
+}
+
+void test_pop_back()
+{
+    BitMap bitmap(10);
+    size_t oSize = bitmap.size();
+    bitmap.pop_back();
+    test("pop_back()", bitmap.size() == oSize-1);
+    oSize = bitmap.size();
+    bitmap.pop_back();
+    test("pop_back() remove word", bitmap.size() == oSize-1);
+    std::cout << "-----------------------------------\n";
 }
 
 int main (void)
 {
-    int8_t testBit;
     failed = 0;
     tests = 0;
-    std::string bits = "01001101001101011000";
 
-    // Constructor tests
-    std::cout << "CONSTRUCTOR TEST" << "\n";
-    BitMap zeros(5);
-    std::cout << "Size constructor (5): ";
-    zeros.print();
-    BitMap vBits(bits);
-    std::cout << "String: " << bits << "\n";
-    std::cout << "Copy from string: ";
-    vBits.print();
-    BitMap copy(vBits);
-    std::cout << "Copy constructor from previous: ";
-    copy.print();
-    std::cout << "------------------------" << "\n";
+    test_constructor_empty();
+    test_constructor_zeros();
+    test_constructor_str();
+    test_constructor_copy();
 
-    // Size test
-    std::cout << "SIZE TEST" << "\n";
-    std::cout << "Size of bitmap: " << vBits.size() << " | "
-              << "Number of bits: " << bits.size() << "\n";
-    test("Size()", vBits.size() == bits.size(), vBits);
-    std::cout << "------------------------" << "\n";
+    test_get();
+    test_set();
+    test_clear();
+    test_toggle();
 
-    // Get test
-    std::cout << "GET TEST" << "\n";
-    testBit = 15;
-    printf("Bit %d of bitmap: %d | Original bit %d: %c\n", testBit, vBits.get(testBit), testBit, bits[testBit]);
-    vBits.print();
-    std::cout << bits << " <- string\n";
-    test("Get()", vBits.get(testBit) == bits[testBit] - '0', vBits);
-    test("Direct get()", vBits.get(testBit) == 1, vBits);
-    test("Get() out of bounds", vBits.get(100) == -1, vBits);
-    std::cout << "------------------------" << "\n";
-
-    // Set test
-    std::cout << "SET TEST" << "\n";
-    testBit = 2;
-    assert(vBits.get(testBit) == 0);
-    assert(vBits.set(testBit) == 1);
-    vBits.print();
-    test("Set()", vBits.get(testBit) == 1, vBits);
-    assert(vBits.set(testBit) == 1);
-    test("Double set()", vBits.get(testBit) == 1, vBits);
-    test("Set() out of bounds", vBits.set(100) == 0, vBits);
-    std::cout << "------------------------" << "\n";
-
-    // Clear test
-    std::cout << "CLEAR TEST" << "\n";
-    testBit = 2;
-    vBits.set(testBit);
-    assert(vBits.get(testBit) == 1);
-    assert(vBits.clear(testBit) == 1);
-    test("Clear()", vBits.get(testBit) == 0, vBits);
-    assert(vBits.clear(testBit) == 1);
-    test("Double clear()", vBits.get(testBit) == 0, vBits);
-    test("Clear() out of bounds", vBits.clear(100) == 0, vBits);
-    std::cout << "------------------------" << "\n";
-
-    // Toggle test
-    std::cout << "TOGGLE TEST" << "\n";
-    testBit = 2;
-    assert(vBits.set(testBit) == 1);
-    assert(vBits.get(testBit) == 1);
-    test("Toggle() output", vBits.toggle(testBit) == 0, vBits);
-    test("Toggle()", vBits.get(testBit) == 0, vBits);
-    test("Toggle() output", vBits.toggle(testBit) == 1, vBits);
-    test("Toggle()", vBits.get(testBit) == 1, vBits);
-    test("Toggle() out of bounds", vBits.toggle(100) == -1, vBits);
-    std::cout << "------------------------" << "\n";
-
-    // Push-back test
-    std::cout << "PUSH-BACK TEST\n";
-    vBits.print();
-    size_t oSize = vBits.size();
-    vBits.push_back(0);
-    test("push_back(0)", oSize + 1 == vBits.size(), vBits);
-    oSize = vBits.size();
-    vBits.push_back(1);
-    test("push_back(1)", vBits.size() == oSize+1, vBits);
-    std::cout << "------------------------" << "\n";
-
-    // Pop-back test
-    std::cout << "POP-BACK TEST" << "\n";
-    vBits.print();
-    oSize = vBits.size();
-    vBits.pop_back();
-    test("pop_back()", vBits.size() == oSize-1, vBits);
-    std::cout << "-----------------------------------\n";
+    test_push_back();
+    test_pop_back();
 
     if (!failed) {
         std::cout << GREEN << "PASSED ALL TESTS" << RESET_CLR << "\n";
