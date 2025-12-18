@@ -113,7 +113,7 @@ void BitMap::pop_back()
 }
 
 // BITMAP OPERATIONS
-ulong BitMap::rank(size_t idx)
+size_t BitMap::rank(size_t idx)
 {
     ulong ans = 0;
     for (size_t i = 0; i < idx+1; i++) {

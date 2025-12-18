@@ -63,7 +63,7 @@ class BitMap
         // BITMAP OPERATIONS
         // @param idx Position between 0 and size()-1
         // @return Number of ones up to that idx (included)
-        ulong rank(size_t idx);
+        size_t rank(size_t idx);
 
         // BASIC VECTOR OPERATIONS
         bool isEmpty();
