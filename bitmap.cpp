@@ -124,6 +124,19 @@ size_t BitMap::rank(size_t idx)
     return ans;
 }
 
+size_t BitMap::select(size_t n, int8_t bit)
+{
+    size_t cnt = 0;
+    for (size_t ans = 0; ans < _size; ans++) {
+        if (get(ans) == bit) {
+            cnt++;
+            if (cnt == n)
+                return ans;
+        }
+    }
+    return -1;
+}
+
 // VECTOR OPERATIONS
 bool BitMap::isEmpty()
 {
@@ -137,7 +150,7 @@ size_t BitMap::size()
 std::string BitMap::toString()
 {
     std::string bitmap;
-    for (int i = 0; i < _size; i++) {
+    for (size_t i = 0; i < _size; i++) {
         bitmap.push_back(get(i) + '0');
     }
     return bitmap;

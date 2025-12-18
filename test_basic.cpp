@@ -203,6 +203,21 @@ void test_rank()
     std::cout << "-----------------------------------\n";
 }
 
+void test_select()
+{
+    std::string bits = "011010111010101011010100";
+    BitMap bmap(bits);
+    bool works = true;
+    if (bmap.select(1, 0) != 0) works = false;
+    if (bmap.select(3, 1) != 4) works = false;
+    if (bmap.select(6, 0) != 13) works = false;
+    if (bmap.select(10, 1) != 16) works = false;
+    if (bmap.select(2, 1) != 2) works = false;
+    if (bmap.select(4, 0) != 9) works = false;
+    test("select()", works);
+    std::cout << "-----------------------------------\n";
+}
+
 int main (void)
 {
     failed = 0;
@@ -221,6 +236,7 @@ int main (void)
     test_pop_back();
 
     test_rank();
+    test_select();
 
     test_toString();
 
