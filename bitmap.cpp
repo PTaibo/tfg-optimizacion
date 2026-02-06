@@ -100,6 +100,8 @@ void BitMap::push_back(int8_t bit)
     }
     if (bit == 1) {
         set(_size-1);
+    } else {
+        clear(_size-1);
     }
 }
 
