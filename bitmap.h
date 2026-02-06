@@ -12,7 +12,7 @@ class BitMap
     // ATTRIBUTES
     private:
         using word_t = uint8_t; //!< Type used for bit vector
-        const size_t word_s = 8; //!< Size in bits of word_t
+        const size_t word_s = sizeof(word_t)*8; //!< Size in bits of word_t
 
         size_t _size = 0; //!< Size in bits of the bitmap
         std::vector<word_t> _bits; //!< Bit vector
