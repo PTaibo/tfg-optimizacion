@@ -76,8 +76,7 @@ int8_t BitMap::clear(size_t idx)
         return 0;
 
     size_t word = idx / word_s;
-    word_t mask = getMask(idx);
-    mask = ~mask;
+    word_t mask = ~getMask(idx);
     _bits[word] = _bits[word] & mask;
     return 1;
 }
