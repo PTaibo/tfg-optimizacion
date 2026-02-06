@@ -150,9 +150,9 @@ size_t BitMap::size()
 
 std::string BitMap::toString()
 {
-    std::string bitmap;
+    std::string bitmap (_size, '0');
     for (size_t i = 0; i < _size; i++) {
-        bitmap.push_back(get(i) + '0');
+        bitmap[i] = get(i) + '0';
     }
     return bitmap;
 }
