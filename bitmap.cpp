@@ -12,7 +12,7 @@ BitMap::BitMap()
 BitMap::BitMap(size_t size)
 {
     _size = size;
-    _bits.resize(size/8, 0);
+    _bits.resize(size/word_s, 0);
     if (size % word_s != 0) {
         _bits.push_back(0);
     }
@@ -21,7 +21,7 @@ BitMap::BitMap(size_t size)
 BitMap::BitMap(std::string bits)
 {
     _size = bits.size();
-    _bits.resize(bits.size()/8, 0);
+    _bits.resize(bits.size()/word_s, 0);
     if (bits.size() % word_s != 0) {
         _bits.push_back(0);
     }
