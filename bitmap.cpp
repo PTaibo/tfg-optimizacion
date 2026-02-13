@@ -45,7 +45,7 @@ BitMap::word_t BitMap::getMask(size_t idx)
 {
     size_t msb = word_s - 1;
     size_t bit = msb - (idx % word_s);
-    return 1 << bit; // Mask with 1 in pos bit
+    return (word_t)1 << bit; // Mask with 1 in pos bit
 }
 
 // SINGLE BIT OPERATIONS

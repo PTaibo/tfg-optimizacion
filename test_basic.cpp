@@ -160,9 +160,9 @@ void test_push_back()
     bitmap.push_back(1);
     test("push_back(1)", bitmap.size() == 2 && bitmap.get(1) == 1);
     std::cout << bitmap.toString() << " <- result\n";
-    BitMap bitmap2(8);
+    BitMap bitmap2(64);
     bitmap2.push_back(1);
-    test("push_back() new word", bitmap2.size() == 9 && bitmap2.get(8) == 1);
+    test("push_back() new word", bitmap2.size() == 65 && bitmap2.get(64) == 1);
     std::cout << bitmap2.toString() << " <- result\n";
     std::cout << "------------------------" << "\n";
 }
