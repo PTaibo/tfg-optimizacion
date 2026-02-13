@@ -1,6 +1,9 @@
 #include "bitmap.h"
 
 #include <assert.h>
+#include <cmath>
+
+
 
 // CONSTRUCTORS AND DESTRUCTORS
 
@@ -12,24 +15,28 @@ BitMap::BitMap()
 BitMap::BitMap(size_t size)
 {
     _size = size;
-    _bits.resize(size/word_s, 0);
-    if (size % word_s != 0) {
-        _bits.push_back(0);
-    }
+    _bits.resize((_size + word_s - 1) / word_s, 0); // Ceiling division
+    _rankBlk = log2(_size)/2;
+    ulong ceiling_div = (_size + _rankBlk - 1) / _rankBlk;
+    _rankS.resize(ceiling_div + 1, 0);
 }
 
 BitMap::BitMap(std::string bits)
 {
     _size = bits.size();
-    _bits.resize(bits.size()/word_s, 0);
-    if (bits.size() % word_s != 0) {
-        _bits.push_back(0);
-    }
+    _bits.resize((bits.size() + word_s - 1) / word_s, 0);
+    _rankBlk = log2(bits.size()) / 2;
+    ulong ceiling_div = (bits.size() + _rankBlk - 1) / _rankBlk;
+    _rankS.resize(ceiling_div + 1, 0);
 
     for(size_t i = 0; i < bits.size(); i++) {
         if (bits[i] == '1') {
             set(i);
+            _rankS[(i/_rankBlk)+1]++;
         }
+    }
+    for (size_t i = 1; i < _rankS.size(); i++) {
+        _rankS[i] += _rankS[i-1];
     }
 }
 
@@ -116,12 +123,16 @@ void BitMap::pop_back()
 // BITMAP OPERATIONS
 size_t BitMap::rank(size_t idx)
 {
-    ulong ans = 0;
-    for (size_t i = 0; i < idx+1; i++) {
+    if (idx >= _size)
+        return -1;
+
+    size_t ans = _rankS[idx/_rankBlk];
+    for (size_t i = idx - (idx%_rankBlk); i < idx+1; i++) {
         if (get(i) == 1) {
             ans++;
         }
-    }
+    }    
+
     return ans;
 }
 

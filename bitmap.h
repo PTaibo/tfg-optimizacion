@@ -16,6 +16,8 @@ class BitMap
 
         size_t _size = 0; //!< Size in bits of the bitmap
         std::vector<word_t> _bits; //!< Bit vector
+        size_t _rankBlk = 0; //!< Number of bits per block of rankS
+        std::vector<uint32_t> _rankS; //!< Rank helper structure
 
     // METHODS
     private:
