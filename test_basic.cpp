@@ -233,6 +233,24 @@ void test_select()
     std::cout << "-----------------------------------\n";
 }
 
+void test_long_bitmap()
+{
+    std::string bits = "01101011101010101101010001010110101010010101001010001010101001010100100000000000111111110101001001001011010101010010100101010100100100011101001010111010100000101010011101010101011100111010001011110101010010000010101";
+    BitMap bmap(bits);
+
+    bool works = true;
+    if (bmap.rank(28) != 15) works = false;
+    if (bmap.rank(15) != 9) works = false;
+    if (bmap.rank(92) != 43) works = false;
+    if (bmap.rank(115) != 53) works = false;
+    if (bmap.rank(8) != 6) works = false;
+    if (bmap.rank(46) != 24) works = false;
+    if (bmap.rank(120) != 55) works = false;
+    if (bmap.rank(205) != 97) works = false;
+    test("Long bitmap rank()", works);
+    std::cout << "-----------------------------------\n";
+}
+
 int main (void)
 {
     failed = 0;
@@ -255,6 +273,7 @@ int main (void)
     test_select();
 
     test_toString();
+    test_long_bitmap();
 
     if (!failed) {
         std::cout << GREEN << "PASSED ALL TESTS" << RESET_CLR << "\n";
@@ -265,3 +284,4 @@ int main (void)
 
     return 0;
 }
+
