@@ -6,7 +6,6 @@
 
 
 // CONSTRUCTORS AND DESTRUCTORS
-
 BitMap::BitMap()
 {
     _size = 0;
@@ -15,7 +14,8 @@ BitMap::BitMap()
 BitMap::BitMap(size_t size)
 {
     _size = size;
-    _bits.resize((_size + word_s - 1) / word_s, 0); // Ceiling division
+    // Int ceiling division: (A + B - 1) / B
+    _bits.resize((_size + word_s - 1) / word_s, 0); 
     _rankBlk = log2(_size)/2;
     ulong ceiling_div = (_size + _rankBlk - 1) / _rankBlk;
     _rankS.resize(ceiling_div + 1, 0);
