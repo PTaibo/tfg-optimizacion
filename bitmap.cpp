@@ -121,7 +121,7 @@ void BitMap::pop_back()
 }
 
 // BITMAP OPERATIONS
-size_t BitMap::rank(size_t idx)
+long BitMap::rank(size_t idx)
 {
     if (idx >= _size)
         return -1;
@@ -136,7 +136,7 @@ size_t BitMap::rank(size_t idx)
     return ans;
 }
 
-size_t BitMap::select(size_t n, int8_t bit)
+long BitMap::select(size_t n, int8_t bit)
 {
     size_t cnt = 0;
     for (size_t ans = 0; ans < _size; ans++) {

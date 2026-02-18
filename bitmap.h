@@ -65,11 +65,11 @@ class BitMap
         // BITMAP OPERATIONS
         // @param idx Position between 0 and size()-1
         // @return Number of ones up to that idx (included)
-        size_t rank(size_t idx);
+        long rank(size_t idx);
         // @brief Get position of the nth element of value "bit"
         // @param bit Value for the select (0 or 1)
         // @return Position of the bit or -1 if not found
-        size_t select(size_t n, int8_t bit);
+        long select(size_t n, int8_t bit);
 
         // BASIC VECTOR OPERATIONS
         bool isEmpty();
