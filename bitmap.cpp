@@ -149,6 +149,35 @@ long BitMap::select(size_t n, int8_t bit)
     return -1;
 }
 
+long BitMap::select1(size_t n)
+{
+    if (n < 1 || _rankS.back() < n)
+        return -1;
+
+    // Binary search in rank structure
+    int l = -1;
+    int r = _rankS.size();
+    while (r > l+1) {
+        int m = (l+r)/2;
+        if (_rankS[m] < n) {
+            l = m;
+        }
+        else {
+            r = m;
+        }
+    }
+
+    size_t i;
+    size_t cnt = _rankS[l];
+    for (i = l * _rankBlk; cnt < n; i++) {
+        if (get(i) == 1) {
+            cnt++;
+        }
+    }    
+
+    return i-1;
+}
+
 // VECTOR OPERATIONS
 bool BitMap::isEmpty()
 {

@@ -70,6 +70,9 @@ class BitMap
         // @param bit Value for the select (0 or 1)
         // @return Position of the bit or -1 if not found
         long select(size_t n, int8_t bit);
+        // @brief Get position of the nth 1
+        // @return Position of the bit or -1 if not found
+        long select1(size_t n);
 
         // BASIC VECTOR OPERATIONS
         bool isEmpty();

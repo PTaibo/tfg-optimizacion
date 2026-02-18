@@ -233,6 +233,18 @@ void test_select()
     std::cout << "-----------------------------------\n";
 }
 
+void test_select1()
+{
+    std::string bits = "011010111010101011010100";
+    BitMap bmap(bits);
+    bool works = true;
+    if (bmap.select1(3) != 4) works = false;
+    if (bmap.select1(10) != 16) works = false;
+    if (bmap.select1(2) != 2) works = false;
+    test("select1()", works);
+    std::cout << "-----------------------------------\n";
+}
+
 void test_long_bitmap()
 {
     std::string bits = "01101011101010101101010001010110101010010101001010001010101001010100100000000000111111110101001001001011010101010010100101010100100100011101001010111010100000101010011101010101011100111010001011110101010010000010101";
@@ -248,6 +260,17 @@ void test_long_bitmap()
     if (bmap.rank(120) != 55) works = false;
     if (bmap.rank(205) != 97) works = false;
     test("Long bitmap rank()", works);
+
+    works = true;
+    if (bmap.select1(14) != 25) works = false;
+    if (bmap.select1(41) != 87) works = false;
+    if (bmap.select1(59) != 128) works = false;
+    if (bmap.select1(77) != 167) works = false;
+    if (bmap.select1(1) != 1) works = false;
+    if (bmap.select1(101) != -1) works = false;
+    if (bmap.select1(96) != 201) works = false;
+    if (bmap.select1(100) != 214) works = false;
+    test("Long bitmap select1()", works);
     std::cout << "-----------------------------------\n";
 }
 
@@ -271,6 +294,7 @@ int main (void)
 
     test_rank();
     test_select();
+    test_select1();
 
     test_toString();
     test_long_bitmap();
