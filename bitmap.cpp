@@ -138,8 +138,20 @@ long BitMap::rank(size_t idx)
 
 long BitMap::select(size_t n, int8_t bit)
 {
+    if (n < 1 || _rankS.back() < n) {
+        return -1;
+    }
+
     size_t cnt = 0;
-    for (size_t ans = 0; ans < _size; ans++) {
+    size_t i, pcount;
+    for (i = 0; i < _bits.size(); i++) {
+        pcount = POPCOUNT(_bits[i]);
+        if (cnt + pcount >= n) {
+            break;
+        }
+        cnt += pcount;
+    }
+    for (size_t ans = i * word_s; ans < _size; ans++) {
         if (get(ans) == bit) {
             cnt++;
             if (cnt == n)

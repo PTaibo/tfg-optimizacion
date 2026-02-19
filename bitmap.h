@@ -5,8 +5,9 @@
 #include <vector>
 #include <string>
 
-/// @brief Basic implementation of a bitmap
+#define POPCOUNT(x) __builtin_popcountll(x)
 
+/// @brief Basic implementation of a bitmap
 class BitMap
 {
     // ATTRIBUTES
