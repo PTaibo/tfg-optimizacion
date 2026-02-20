@@ -32,10 +32,10 @@ class BitMap
         BitMap();
         // @param size Size of bitmap in bits
         // @return Bitmap initialized to 0
-        BitMap(size_t size);
+        BitMap(size_t size, size_t rankBlkSize = 0);
         // @brief Converts the string into a bitmap
         // @param bits String of 0s and 1s
-        BitMap(std::string bits);
+        BitMap(std::string bits, size_t rankBlkSize = 0);
         // @brief Creates a copy of bitmap
         BitMap(const BitMap& bitmap);
 

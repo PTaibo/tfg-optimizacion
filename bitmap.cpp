@@ -11,21 +11,27 @@ BitMap::BitMap()
     _size = 0;
 }
 
-BitMap::BitMap(size_t size)
+BitMap::BitMap(size_t size, size_t rankBlkSize)
 {
     _size = size;
     // Int ceiling division: (A + B - 1) / B
     _bits.resize((_size + word_s - 1) / word_s, 0); 
-    _rankBlk = log2(_size)/2;
+    _rankBlk = rankBlkSize;
+    if (!_rankBlk) {
+        _rankBlk = log2(_size)/2;
+    }
     ulong ceiling_div = (_size + _rankBlk - 1) / _rankBlk;
     _rankS.resize(ceiling_div + 1, 0);
 }
 
-BitMap::BitMap(std::string bits)
+BitMap::BitMap(std::string bits, size_t rankBlkSize)
 {
     _size = bits.size();
     _bits.resize((bits.size() + word_s - 1) / word_s, 0);
-    _rankBlk = log2(bits.size()) / 2;
+    _rankBlk = rankBlkSize;
+    if (!_rankBlk) {
+        _rankBlk = log2(bits.size())/2;
+    }
     ulong ceiling_div = (bits.size() + _rankBlk - 1) / _rankBlk;
     _rankS.resize(ceiling_div + 1, 0);
 
@@ -44,6 +50,8 @@ BitMap::BitMap(const BitMap& bitmap)
 {
     _size = bitmap._size;
     _bits.assign(bitmap._bits.begin(), bitmap._bits.end());
+    _rankBlk = bitmap._rankBlk;
+    _rankS.assign(bitmap._rankS.begin(), bitmap._rankS.end());
 }
 
 BitMap::~BitMap() {}
