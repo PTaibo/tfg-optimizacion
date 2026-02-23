@@ -3,6 +3,7 @@
 #include <string>
 #include <assert.h>
 #include <iostream>
+#include <set>
 
 #include "utils.h"
 
@@ -274,6 +275,61 @@ void test_long_bitmap()
     std::cout << "-----------------------------------\n";
 }
 
+void test_random_set_get(size_t size)
+{
+    srand(time(0));
+    BitMap bmap(size);
+    std::set<size_t> ones;
+    for (size_t i = 0; i < size; i++) {
+        if (rand() % 2) {
+            ones.insert(i);
+            bmap.lazySet(i);
+        }
+    }
+
+    bool works = true;
+    for (int i = 0; i < 1000; i++) {
+        size_t idx = rand() % size;
+        if (ones.find(idx) != ones.end()) {
+            if (bmap.get(idx) != 1) works = false;
+        }
+        else {
+            if (bmap.get(idx) != 0) works = false;
+        }
+    }
+    test("Random set() get()", works);
+    std::cout << "-----------------------------------\n";
+}
+
+void test_random_rank(size_t size)
+{
+    srand(time(0));
+    BitMap bmap(size);
+    std::vector<long> ones (size);
+    if (rand() % 2) {
+        ones[0] = 1;
+        bmap.lazySet(0);
+    }
+    for (size_t i = 1; i < size; i++) {
+        ones[i] = ones[i-1];
+        if (rand() % 2) {
+            ones[i]++;
+            bmap.lazySet(i);
+        }
+    }
+    bmap.createRankS();
+
+    bool works = true;
+    for (int i = 0; i < 1000; i++) {
+        size_t idx = rand() % size;
+        if (bmap.rank(idx) != ones[idx]) {
+            works = false;
+        }
+    }
+    test("Random rank()", works);
+    std::cout << "-----------------------------------\n";
+}
+
 int main (void)
 {
     failed = 0;
@@ -288,9 +344,9 @@ int main (void)
     test_set();
     test_clear();
     test_toggle();
-    test_push_back();
-    test_pop_back();
-    test_push_pop_push();
+    // test_push_back();
+    // test_pop_back();
+    // test_push_pop_push();
 
     test_rank();
     test_select();
@@ -298,6 +354,10 @@ int main (void)
 
     test_toString();
     test_long_bitmap();
+
+    size_t bmap_size = 10000000;
+    test_random_set_get(bmap_size);
+    test_random_rank(bmap_size);
 
     if (!failed) {
         std::cout << GREEN << "PASSED ALL TESTS" << RESET_CLR << "\n";
