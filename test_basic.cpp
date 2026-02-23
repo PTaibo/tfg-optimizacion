@@ -123,33 +123,33 @@ void test_get()
 void test_set()
 {
     BitMap bitmap("0101");
-    assert(bitmap.set(0) == 1);
+    assert(bitmap.lazySet(0) == 1);
     test("Set()", bitmap.get(0) == 1);
-    assert(bitmap.set(1) == 1);
+    assert(bitmap.lazySet(1) == 1);
     test("Double set()", bitmap.get(1) == 1);
-    test("Set() out of bounds", bitmap.set(100) == 0);
+    test("Set() out of bounds", bitmap.lazySet(100) == 0);
     std::cout << "------------------------" << "\n";
 }
 
 void test_clear()
 {
     BitMap bitmap("0101");
-    assert(bitmap.clear(1) == 1);
+    assert(bitmap.lazyClear(1) == 1);
     test("Clear()", bitmap.get(1) == 0);
-    assert(bitmap.clear(0) == 1);
+    assert(bitmap.lazyClear(0) == 1);
     test("Double clear()", bitmap.get(0) == 0);
-    test("Clear() out of bounds", bitmap.clear(100) == 0);
+    test("Clear() out of bounds", bitmap.lazyClear(100) == 0);
     std::cout << "------------------------" << "\n";
 }
 
 void test_toggle()
 {
     BitMap bitmap("0101");
-    test("Toggle() output", bitmap.toggle(1) == 0);
+    test("Toggle() output", bitmap.lazyToggle(1) == 0);
     test("Toggle()", bitmap.get(1) == 0);
-    test("Toggle() output", bitmap.toggle(0) == 1);
+    test("Toggle() output", bitmap.lazyToggle(0) == 1);
     test("Toggle()", bitmap.get(0) == 1);
-    test("Toggle() out of bounds", bitmap.toggle(100) == -1);
+    test("Toggle() out of bounds", bitmap.lazyToggle(100) == -1);
     std::cout << "------------------------" << "\n";
 }
 
