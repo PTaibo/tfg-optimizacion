@@ -38,6 +38,8 @@ class BitMap
         BitMap(std::string bits, size_t rankBlkSize = 0);
         // @brief Creates a copy of bitmap
         BitMap(const BitMap& bitmap);
+        // @brief Creates the rank support structure from scratch
+        void createRankS();
 
         ~BitMap();
 

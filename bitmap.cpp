@@ -54,8 +54,25 @@ BitMap::BitMap(const BitMap& bitmap)
     _rankS.assign(bitmap._rankS.begin(), bitmap._rankS.end());
 }
 
+void BitMap::createRankS()
+{
+    ulong ceiling_div = (_size + _rankBlk - 1) / _rankBlk;
+    _rankS.clear();
+    _rankS.resize(ceiling_div + 1, 0);
+
+    for(size_t i = 0; i < _size; i++) {
+        if (get(i) == 1) {
+            _rankS[(i/_rankBlk)+1]++;
+        }
+    }
+    for (size_t i = 1; i < _rankS.size(); i++) {
+        _rankS[i] += _rankS[i-1];
+    }
+}
+
 BitMap::~BitMap() {}
 
+// SINGLE BIT OPERATIONS
 BitMap::word_t BitMap::getMask(size_t idx)
 {
     size_t msb = word_s - 1;
@@ -63,7 +80,6 @@ BitMap::word_t BitMap::getMask(size_t idx)
     return (word_t)1 << bit; // Mask with 1 in pos bit
 }
 
-// SINGLE BIT OPERATIONS
 int8_t BitMap::get(size_t idx)
 {
     if (idx >= _size)
