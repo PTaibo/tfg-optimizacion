@@ -19,12 +19,16 @@ class BitMap
         std::vector<word_t> _bits; //!< Bit vector
         size_t _rankBlk = 0; //!< Number of bits per block of rankS
         std::vector<uint32_t> _rankS; //!< Rank helper structure
+        bool _changedBitmap = false;
+        std::vector<int32_t> _lazyRank; //!< Records bit changes
 
     // METHODS
     private:
         // @param idx Bit position between 0 and _size-1
         // @return Word mask for the bit in that position
         word_t getMask(size_t idx);
+        // @brief Updates rankS using the changes stored in lazyRank
+        void updateRank();
 
     public:
         // CONSTRUCTORS AND DESTRUCTORS
@@ -38,8 +42,6 @@ class BitMap
         BitMap(std::string bits, size_t rankBlkSize = 0);
         // @brief Creates a copy of bitmap
         BitMap(const BitMap& bitmap);
-        // @brief Creates the rank support structure from scratch
-        void createRankS();
 
         ~BitMap();
 

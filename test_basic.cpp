@@ -317,7 +317,6 @@ void test_random_rank(size_t size)
             bmap.lazySet(i);
         }
     }
-    bmap.createRankS();
 
     bool works = true;
     for (int i = 0; i < 1000; i++) {

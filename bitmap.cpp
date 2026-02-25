@@ -22,6 +22,8 @@ BitMap::BitMap(size_t size, size_t rankBlkSize)
     }
     ulong ceiling_div = (_size + _rankBlk - 1) / _rankBlk;
     _rankS.resize(ceiling_div + 1, 0);
+    _changedBitmap = false;
+    _lazyRank.resize(ceiling_div + 1, 0);
 }
 
 BitMap::BitMap(std::string bits, size_t rankBlkSize)
@@ -34,6 +36,8 @@ BitMap::BitMap(std::string bits, size_t rankBlkSize)
     }
     ulong ceiling_div = (bits.size() + _rankBlk - 1) / _rankBlk;
     _rankS.resize(ceiling_div + 1, 0);
+    _changedBitmap = false;
+    _lazyRank.resize(ceiling_div + 1, 0);
 
     for(size_t i = 0; i < bits.size(); i++) {
         if (bits[i] == '1') {
@@ -52,22 +56,8 @@ BitMap::BitMap(const BitMap& bitmap)
     _bits.assign(bitmap._bits.begin(), bitmap._bits.end());
     _rankBlk = bitmap._rankBlk;
     _rankS.assign(bitmap._rankS.begin(), bitmap._rankS.end());
-}
-
-void BitMap::createRankS()
-{
-    ulong ceiling_div = (_size + _rankBlk - 1) / _rankBlk;
-    _rankS.clear();
-    _rankS.resize(ceiling_div + 1, 0);
-
-    for(size_t i = 0; i < _size; i++) {
-        if (get(i) == 1) {
-            _rankS[(i/_rankBlk)+1]++;
-        }
-    }
-    for (size_t i = 1; i < _rankS.size(); i++) {
-        _rankS[i] += _rankS[i-1];
-    }
+    _changedBitmap = bitmap._changedBitmap;
+    _lazyRank.assign(bitmap._lazyRank.begin(), bitmap._lazyRank.end());
 }
 
 BitMap::~BitMap() {}
@@ -137,6 +127,8 @@ int8_t BitMap::lazySet(size_t idx)
     size_t word = idx / word_s;
     word_t mask = getMask(idx);
     _bits[word] = _bits[word] | mask;
+    _changedBitmap = true;
+    _lazyRank[(idx/_rankBlk)+1]++;
 
     return 1;
 }
@@ -149,6 +141,8 @@ int8_t BitMap::lazyClear(size_t idx)
     size_t word = idx / word_s;
     word_t mask = ~getMask(idx);
     _bits[word] = _bits[word] & mask;
+    _changedBitmap = true;
+    _lazyRank[(idx/_rankBlk)+1]--;
 
     return 1;
 }
@@ -161,7 +155,16 @@ int8_t BitMap::lazyToggle(size_t idx)
     size_t word = idx / word_s;
     word_t mask = getMask(idx);
     _bits[word] = _bits[word] ^ mask;
-    return (_bits[word] & mask) ? 1 : 0;
+    _changedBitmap = true;
+
+    if (_bits[word] & mask) {
+        _lazyRank[(idx/_rankBlk)+1]++;
+        return 1;
+    }
+    else {
+        _lazyRank[(idx/_rankBlk)+1]--;
+        return 0;
+    }
 }
 
 void BitMap::push_back(int8_t bit)
@@ -186,10 +189,24 @@ void BitMap::pop_back()
 }
 
 // BITMAP OPERATIONS
+void BitMap::updateRank()
+{
+    uint64_t acum = 0;
+    for (size_t i = 0; i < _rankS.size(); i++) {
+        acum += _lazyRank[i];
+        _lazyRank[i] = 0;
+        _rankS[i] += acum;
+    }
+    _changedBitmap = false;
+}
+
 long BitMap::rank(size_t idx)
 {
     if (idx >= _size)
         return -1;
+
+    if (_changedBitmap)
+        updateRank();
 
     size_t ans = _rankS[idx/_rankBlk];
     for (size_t i = idx - (idx%_rankBlk); i < idx+1; i++) {
@@ -243,6 +260,9 @@ long BitMap::select1(size_t n)
             r = m;
         }
     }
+
+    if (_changedBitmap)
+        updateRank();
 
     size_t i;
     size_t cnt = _rankS[l];
