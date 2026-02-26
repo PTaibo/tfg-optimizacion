@@ -233,7 +233,7 @@ void test_long_bitmap()
     std::cout << "-----------------------------------\n";
 }
 
-void test_random_set_get(size_t size)
+void test_random_set_get(size_t size, int tests)
 {
     srand(time(0));
     BitMap bmap(size);
@@ -246,7 +246,7 @@ void test_random_set_get(size_t size)
     }
 
     bool works = true;
-    for (int i = 0; i < 1000; i++) {
+    for (int i = 0; i < tests; i++) {
         size_t idx = rand() % size;
         if (ones.find(idx) != ones.end()) {
             if (bmap.get(idx) != 1) works = false;
@@ -259,7 +259,7 @@ void test_random_set_get(size_t size)
     std::cout << "-----------------------------------\n";
 }
 
-void test_random_rank(size_t size)
+void test_random_rank(size_t size, int tests)
 {
     srand(time(0));
     BitMap bmap(size);
@@ -277,7 +277,7 @@ void test_random_rank(size_t size)
     }
 
     bool works = true;
-    for (int i = 0; i < 1000; i++) {
+    for (int i = 0; i < tests; i++) {
         size_t idx = rand() % size;
         if (bmap.rank(idx) != ones[idx]) {
             works = false;
@@ -287,7 +287,7 @@ void test_random_rank(size_t size)
     std::cout << "-----------------------------------\n";
 }
 
-void test_random_select(size_t size)
+void test_random_select(size_t size, int tests)
 {
     srand(time(0));
     BitMap bmap(size);
@@ -304,7 +304,7 @@ void test_random_select(size_t size)
     }
 
     bool works = true;
-    for (int i = 0; i < 1000; i++) {
+    for (int i = 0; i < tests; i++) {
         size_t idx = rand() % size;
         size_t idx_1s = (idx >= ones.size()) ? -1 : idx;
         if (bmap.rank(idx) != ones[idx_1s]) {
@@ -338,9 +338,10 @@ int main (void)
     test_long_bitmap();
 
     size_t bmap_size = 10000000;
-    test_random_set_get(bmap_size);
-    test_random_rank(bmap_size);
-    test_random_select(bmap_size);
+    int tests = 10000;
+    test_random_set_get(bmap_size, tests);
+    test_random_rank(bmap_size, tests);
+    test_random_select(bmap_size, tests);
 
     if (!failed) {
         std::cout << GREEN << "PASSED ALL TESTS" << RESET_CLR << "\n";
