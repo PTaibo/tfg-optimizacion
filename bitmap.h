@@ -66,10 +66,9 @@ class BitMap
         // @param idx Position between 0 and size()-1
         // @return Number of ones up to that idx (included)
         long rank(size_t idx);
-        // @brief Get position of the nth element of value "bit"
-        // @param bit Value for the select (0 or 1)
+        // @brief Get position of the nth 0
         // @return Position of the bit or -1 if not found
-        long select(size_t n, int8_t bit);
+        long select0(size_t n);
         // @brief Get position of the nth 1
         // @return Position of the bit or -1 if not found
         long select1(size_t n);

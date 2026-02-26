@@ -154,26 +154,26 @@ long BitMap::rank(size_t idx)
     return ans;
 }
 
-long BitMap::select(size_t n, int8_t bit)
+long BitMap::select0(size_t n)
 {
     if (_changedBitmap)
         updateRank();
 
-    if (n < 1 || _rankS.back() < n) {
+    if (n < 1 || _size - _rankS.back() < n) {
         return -1;
     }
 
     size_t cnt = 0;
     size_t i, pcount;
     for (i = 0; i < _bits.size(); i++) {
-        pcount = POPCOUNT(_bits[i]);
+        pcount = word_s - POPCOUNT(_bits[i]);
         if (cnt + pcount >= n) {
             break;
         }
         cnt += pcount;
     }
     for (size_t ans = i * word_s; ans < _size; ans++) {
-        if (get(ans) == bit) {
+        if (get(ans) == 0) {
             cnt++;
             if (cnt == n)
                 return ans;
