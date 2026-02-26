@@ -199,6 +199,9 @@ long BitMap::rank(size_t idx)
 
 long BitMap::select(size_t n, int8_t bit)
 {
+    if (_changedBitmap)
+        updateRank();
+
     if (n < 1 || _rankS.back() < n) {
         return -1;
     }
@@ -224,6 +227,9 @@ long BitMap::select(size_t n, int8_t bit)
 
 long BitMap::select1(size_t n)
 {
+    if (_changedBitmap)
+        updateRank();
+
     if (n < 1 || _rankS.back() < n)
         return -1;
 
@@ -239,9 +245,6 @@ long BitMap::select1(size_t n)
             r = m;
         }
     }
-
-    if (_changedBitmap)
-        updateRank();
 
     size_t i;
     size_t cnt = _rankS[l];
