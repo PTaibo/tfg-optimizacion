@@ -3,14 +3,7 @@
 #include <assert.h>
 #include <cmath>
 
-
-
 // CONSTRUCTORS AND DESTRUCTORS
-BitMap::BitMap()
-{
-    _size = 0;
-}
-
 BitMap::BitMap(size_t size, size_t rankBlkSize)
 {
     _size = size;

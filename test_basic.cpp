@@ -24,18 +24,6 @@ void test(std::string msg, bool correct)
     }
 }
 
-void test_constructor_empty()
-{
-    BitMap empty;
-    bool size = (empty.size() == 0);
-    bool noEl = (empty.get(0) == -1);
-    test("Empty constructor", size && empty.isEmpty() && noEl);
-    test("  Size 0", size);
-    test("  Is empty", empty.isEmpty());
-    test("  No elements", noEl);
-    std::cout << "-----------------------------------\n";
-}
-
 void test_constructor_zeros()
 {
     BitMap zeros(5);
@@ -347,7 +335,6 @@ int main (void)
     failed = 0;
     tests = 0;
 
-    test_constructor_empty();
     test_constructor_zeros();
     test_constructor_str();
     test_constructor_copy();

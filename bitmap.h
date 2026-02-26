@@ -32,8 +32,6 @@ class BitMap
 
     public:
         // CONSTRUCTORS AND DESTRUCTORS
-        // @return Empty bitmap
-        BitMap();
         // @param size Size of bitmap in bits
         // @return Bitmap initialized to 0
         BitMap(size_t size, size_t rankBlkSize = 0);
