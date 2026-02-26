@@ -167,27 +167,6 @@ int8_t BitMap::lazyToggle(size_t idx)
     }
 }
 
-void BitMap::push_back(int8_t bit)
-{
-    _size++;
-    if (_size % word_s == 1) {
-        _bits.push_back(0);
-    }
-    if (bit == 1) {
-        set(_size-1);
-    } else {
-        clear(_size-1);
-    }
-}
-
-void BitMap::pop_back()
-{
-    _size--;
-    if (_size % word_s == 0) {
-        _bits.pop_back();
-    }
-}
-
 // BITMAP OPERATIONS
 void BitMap::updateRank()
 {

@@ -153,48 +153,6 @@ void test_toggle()
     std::cout << "------------------------" << "\n";
 }
 
-void test_push_back()
-{
-    BitMap bitmap;
-    bitmap.push_back(0);
-    test("push_back(0)", bitmap.size() == 1 && bitmap.get(0) == 0);
-    bitmap.push_back(1);
-    test("push_back(1)", bitmap.size() == 2 && bitmap.get(1) == 1);
-    std::cout << bitmap.toString() << " <- result\n";
-    BitMap bitmap2(64);
-    bitmap2.push_back(1);
-    test("push_back() new word", bitmap2.size() == 65 && bitmap2.get(64) == 1);
-    std::cout << bitmap2.toString() << " <- result\n";
-    std::cout << "------------------------" << "\n";
-}
-
-void test_pop_back()
-{
-    BitMap bitmap(10);
-    size_t oSize = bitmap.size();
-    bitmap.pop_back();
-    test("pop_back()", bitmap.size() == oSize-1);
-    oSize = bitmap.size();
-    bitmap.pop_back();
-    test("pop_back() remove word", bitmap.size() == oSize-1);
-    std::cout << "-----------------------------------\n";
-}
-
-void test_push_pop_push()
-{
-    BitMap bitmap(10);
-    bitmap.push_back(1);
-    assert(bitmap.get(10) == 1);
-    bitmap.pop_back();
-    bitmap.push_back(0);
-    test("push(1), pop(), push(0)", bitmap.get(10) == 0);
-    bitmap.push_back(0);
-    bitmap.pop_back();
-    bitmap.push_back(1);
-    test("push(0), pop(), push(1)", bitmap.get(11) == 1);
-    std::cout << "-----------------------------------\n";
-}
-
 void test_toString()
 {
     std::string original = "01001101001101011000";
@@ -343,9 +301,6 @@ int main (void)
     test_set();
     test_clear();
     test_toggle();
-    // test_push_back();
-    // test_pop_back();
-    // test_push_pop_push();
 
     test_rank();
     test_select();

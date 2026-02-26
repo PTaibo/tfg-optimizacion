@@ -73,11 +73,6 @@ class BitMap
         // @param idx Position between 0 and size()-1
         // @return New value of bit or -1 if out of bounds
         int8_t lazyToggle(size_t idx);
-        // @brief Appends a bit at the end of the bitmap
-        // @param bit Value of the bit
-        void push_back(int8_t bit);
-        // @brief Removes a bit from the end of the bitmap
-        void pop_back();
 
         // BITMAP OPERATIONS
         // @param idx Position between 0 and size()-1
