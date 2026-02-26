@@ -61,18 +61,6 @@ class BitMap
         // @param idx Position between 0 and size()-1
         // @return New value of bit or -1 if out of bounds
         int8_t toggle(size_t idx);
-        // @brief Sets bit to 1. Does not update rankS
-        // @param idx Position between 0 and size()-1
-        // @return 0 if out of bounds (error)
-        int8_t lazySet(size_t idx);
-        // @brief Sets bit to 0. Does not update rankS
-        // @param idx Position between 0 and size()-1
-        // @return 0 if out of bounds (error)
-        int8_t lazyClear(size_t idx);
-        // @brief Toggles bit. Does not update rankS
-        // @param idx Position between 0 and size()-1
-        // @return New value of bit or -1 if out of bounds
-        int8_t lazyToggle(size_t idx);
 
         // BITMAP OPERATIONS
         // @param idx Position between 0 and size()-1

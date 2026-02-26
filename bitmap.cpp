@@ -42,11 +42,7 @@ BitMap::BitMap(std::string bits, size_t rankBlkSize)
     for(size_t i = 0; i < bits.size(); i++) {
         if (bits[i] == '1') {
             set(i);
-            _rankS[(i/_rankBlk)+1]++;
         }
-    }
-    for (size_t i = 1; i < _rankS.size(); i++) {
-        _rankS[i] += _rankS[i-1];
     }
 }
 
@@ -87,45 +83,6 @@ int8_t BitMap::set(size_t idx)
 
     size_t word = idx / word_s;
     word_t mask = getMask(idx);
-
-    if (_bits[word] & mask) {
-        return 1;
-    }
-
-    _bits[word] = _bits[word] | mask;
-    // for (size_t i = idx/_rankBlk; i < _rankS.size(); i++) {
-    // for (size_t i = idx/_rankBlk + 1; i < _rankS.size(); i++) {
-    //     _rankS[i]++; // NOTE: Fácil de paralelizar
-    // }
-    return 1;
-}
-
-int8_t BitMap::clear(size_t idx)
-{
-    if (idx >= _size)
-        return 0;
-
-    size_t word = idx / word_s;
-    word_t mask = ~getMask(idx);
-
-    if ( !(_bits[word] & mask) ) {
-        return 1;
-    }
-
-    _bits[word] = _bits[word] & mask;
-    // for (size_t i = idx/_rankBlk + 1; i < _rankS.size(); i++) {
-    //     _rankS[i]--; // NOTE: Fácil de paralelizar
-    // }
-    return 1;
-}
-
-int8_t BitMap::lazySet(size_t idx)
-{
-    if (idx >= _size)
-        return 0;
-
-    size_t word = idx / word_s;
-    word_t mask = getMask(idx);
     _bits[word] = _bits[word] | mask;
     _changedBitmap = true;
     _lazyRank[(idx/_rankBlk)+1]++;
@@ -133,7 +90,7 @@ int8_t BitMap::lazySet(size_t idx)
     return 1;
 }
 
-int8_t BitMap::lazyClear(size_t idx)
+int8_t BitMap::clear(size_t idx)
 {
     if (idx >= _size)
         return 0;
@@ -147,7 +104,7 @@ int8_t BitMap::lazyClear(size_t idx)
     return 1;
 }
 
-int8_t BitMap::lazyToggle(size_t idx)
+int8_t BitMap::toggle(size_t idx)
 {
     if (idx >= _size)
         return -1;
