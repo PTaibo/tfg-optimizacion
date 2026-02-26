@@ -287,6 +287,34 @@ void test_random_rank(size_t size)
     std::cout << "-----------------------------------\n";
 }
 
+void test_random_select(size_t size)
+{
+    srand(time(0));
+    BitMap bmap(size);
+    std::vector<long> ones(1, 0);
+    if (rand() % 2) {
+        ones.push_back(0);
+        bmap.set(0);
+    }
+    for (size_t i = 1; i < size; i++) {
+        if (rand() % 2) {
+            ones.push_back(i);
+            bmap.set(i);
+        }
+    }
+
+    bool works = true;
+    for (int i = 0; i < 1000; i++) {
+        size_t idx = rand() % size;
+        size_t idx_1s = (idx >= ones.size()) ? -1 : idx;
+        if (bmap.rank(idx) != ones[idx_1s]) {
+            works = false;
+        }
+    }
+    test("Random select()", works);
+    std::cout << "-----------------------------------\n";
+}
+
 int main (void)
 {
     failed = 0;
@@ -312,6 +340,7 @@ int main (void)
     size_t bmap_size = 10000000;
     test_random_set_get(bmap_size);
     test_random_rank(bmap_size);
+    test_random_select(bmap_size);
 
     if (!failed) {
         std::cout << GREEN << "PASSED ALL TESTS" << RESET_CLR << "\n";
