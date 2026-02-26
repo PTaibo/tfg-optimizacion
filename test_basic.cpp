@@ -291,7 +291,7 @@ void test_random_select(size_t size, int tests)
 {
     srand(time(0));
     BitMap bmap(size);
-    std::vector<long> ones(1, 0);
+    std::vector<long> ones(1, -1);
     if (rand() % 2) {
         ones.push_back(0);
         bmap.set(0);
@@ -306,8 +306,8 @@ void test_random_select(size_t size, int tests)
     bool works = true;
     for (int i = 0; i < tests; i++) {
         size_t idx = rand() % size;
-        size_t idx_1s = (idx >= ones.size()) ? -1 : idx;
-        if (bmap.rank(idx) != ones[idx_1s]) {
+        size_t idx_1s = (idx >= ones.size()) ? 0 : idx;
+        if (bmap.select1(idx) != ones[idx_1s]) {
             works = false;
         }
     }
