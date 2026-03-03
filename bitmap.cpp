@@ -1,7 +1,6 @@
 #include "bitmap.h"
 
 #include <assert.h>
-#include <cmath>
 
 // CONSTRUCTORS AND DESTRUCTORS
 BitMap::BitMap(size_t size, size_t rankBlkSize)
@@ -11,7 +10,7 @@ BitMap::BitMap(size_t size, size_t rankBlkSize)
     _bits.resize((_size + word_s - 1) / word_s, 0); 
     _rankBlk = rankBlkSize;
     if (!_rankBlk) {
-        _rankBlk = log2(_size)/2;
+        _rankBlk = 3*word_s;
     }
     ulong ceiling_div = (_size + _rankBlk - 1) / _rankBlk;
     _rankS.resize(ceiling_div + 1, 0);
@@ -25,7 +24,7 @@ BitMap::BitMap(std::string bits, size_t rankBlkSize)
     _bits.resize((bits.size() + word_s - 1) / word_s, 0);
     _rankBlk = rankBlkSize;
     if (!_rankBlk) {
-        _rankBlk = log2(bits.size())/2;
+        _rankBlk = 3*word_s;
     }
     ulong ceiling_div = (bits.size() + _rankBlk - 1) / _rankBlk;
     _rankS.resize(ceiling_div + 1, 0);
@@ -127,6 +126,32 @@ void BitMap::updateRank()
         _rankS[i] += acum;
     }
     _changedBitmap = false;
+}
+
+long BitMap::wrd_rank(size_t idx)
+{
+    if (idx >= _size)
+        return -1;
+
+    if (_changedBitmap)
+        updateRank();
+
+    size_t blkIdx = idx/_rankBlk;
+    size_t ans = _rankS[blkIdx];
+    size_t fstWrd = blkIdx*(_rankBlk/word_s);
+    size_t lstWrd = (idx+1)/word_s;
+    
+    for (size_t currWrd = fstWrd; currWrd < lstWrd; currWrd++) {
+        ans += POPCOUNT(_bits[currWrd]);
+    }
+
+    for (size_t i = lstWrd*word_s; i < idx+1; i++) {
+        if (get(i) == 1) {
+            ans++;
+        }
+    }
+
+    return ans;
 }
 
 long BitMap::rank(size_t idx)

@@ -272,6 +272,34 @@ void test_random_rank(size_t size, int tests)
     std::cout << "-----------------------------------\n";
 }
 
+void test_random_wrd_rank(size_t size, int tests)
+{
+    srand(time(0));
+    BitMap bmap(size);
+    std::vector<long> ones (size);
+    if (rand() % 2) {
+        ones[0] = 1;
+        bmap.set(0);
+    }
+    for (size_t i = 1; i < size; i++) {
+        ones[i] = ones[i-1];
+        if (rand() % 2) {
+            ones[i]++;
+            bmap.set(i);
+        }
+    }
+
+    bool works = true;
+    for (int i = 0; i < tests; i++) {
+        size_t idx = rand() % size;
+        if (bmap.wrd_rank(idx) != ones[idx]) {
+            works = false;
+        }
+    }
+    test("Random wrd_rank()", works);
+    std::cout << "-----------------------------------\n";
+}
+
 void test_random_select0(size_t size, int tests)
 {
     srand(time(0));
@@ -355,6 +383,7 @@ int main (void)
     int tests = 10000;
     test_random_set_get(bmap_size, tests);
     test_random_rank(bmap_size, tests);
+    test_random_wrd_rank(bmap_size, tests);
     test_random_select0(bmap_size, tests);
     test_random_select1(bmap_size, tests);
 

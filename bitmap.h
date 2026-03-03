@@ -12,7 +12,7 @@ class BitMap
 {
     // ATTRIBUTES
     private:
-        using word_t = int64_t; //!< Type used for bit vector
+        using word_t = uint64_t; //!< Type used for bit vector
         const size_t word_s = sizeof(word_t)*8; //!< Size in bits of word_t
 
         size_t _size = 0; //!< Size in bits of the bitmap
@@ -64,6 +64,10 @@ class BitMap
         // @param idx Position between 0 and size()-1
         // @return Number of ones up to that idx (included)
         long rank(size_t idx);
+        // @brief Only works if _rankBlk is divisible by word_s
+        // @param idx Position between 0 and size()-1
+        // @return Number of ones up to that idx (included)
+        long wrd_rank(size_t idx);
         // @brief Get position of the nth 0
         // @return Position of the bit or -1 if not found
         long select0(size_t n);
