@@ -275,7 +275,7 @@ void test_random_rank(size_t size, int tests)
 void test_random_wrd_rank(size_t size, int tests)
 {
     srand(time(0));
-    BitMap bmap(size);
+    BitMap bmap(size, 512);
     std::vector<long> ones (size);
     if (rand() % 2) {
         ones[0] = 1;

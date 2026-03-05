@@ -2,6 +2,8 @@
 
 #include <assert.h>
 
+#define RANKBLK (600) // Default rank block size
+
 // CONSTRUCTORS AND DESTRUCTORS
 BitMap::BitMap(size_t size, size_t rankBlkSize)
 {
@@ -10,7 +12,7 @@ BitMap::BitMap(size_t size, size_t rankBlkSize)
     _bits.resize((_size + word_s - 1) / word_s, 0); 
     _rankBlk = rankBlkSize;
     if (!_rankBlk) {
-        _rankBlk = 3*word_s;
+        _rankBlk = RANKBLK;
     }
     ulong ceiling_div = (_size + _rankBlk - 1) / _rankBlk;
     _rankS.resize(ceiling_div + 1, 0);
@@ -24,7 +26,7 @@ BitMap::BitMap(std::string bits, size_t rankBlkSize)
     _bits.resize((bits.size() + word_s - 1) / word_s, 0);
     _rankBlk = rankBlkSize;
     if (!_rankBlk) {
-        _rankBlk = 3*word_s;
+        _rankBlk = RANKBLK;
     }
     ulong ceiling_div = (bits.size() + _rankBlk - 1) / _rankBlk;
     _rankS.resize(ceiling_div + 1, 0);
@@ -162,12 +164,28 @@ long BitMap::rank(size_t idx)
     if (_changedBitmap)
         updateRank();
 
-    size_t ans = _rankS[idx/_rankBlk];
-    for (size_t i = idx - (idx%_rankBlk); i < idx+1; i++) {
-        if (get(i) == 1) {
-            ans++;
+    size_t blkIdx = (idx+1)/_rankBlk; // NOTE: idx+1 por si idx es el último elmento del bloque
+    size_t ans = _rankS[blkIdx];
+    size_t currBit = _rankBlk*blkIdx;
+
+    size_t fstWrd = (currBit + word_s - 1) / word_s; // NOTE: Integer ceiling division
+    if (fstWrd*word_s < idx+1) {
+        for (; currBit < fstWrd*word_s; currBit++) {
+            if (get(currBit) == 1)
+                ans++;
         }
-    }    
+
+        size_t lstWrd = (idx+1)/word_s;
+        for (size_t currWrd = fstWrd; currWrd < lstWrd; currWrd++) {
+            ans += POPCOUNT(_bits[currWrd]);
+        }
+        currBit = lstWrd*word_s;
+    }
+
+    for (size_t i = currBit; i < idx+1; i++) {
+        if (get(i) == 1)
+            ans++;
+    }
 
     return ans;
 }
