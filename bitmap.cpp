@@ -239,15 +239,29 @@ long BitMap::select1(size_t n)
         }
     }
 
-    size_t i;
     size_t cnt = _rankS[l];
-    for (i = l * _rankBlk; cnt < n; i++) {
-        if (get(i) == 1) {
+    size_t currBit = _rankBlk*l;
+    size_t wrd = (currBit + word_s - 1) / word_s;
+    for (; currBit < wrd*word_s; currBit++) {
+        if (get(currBit) == 1) {
+            cnt++;
+            if (cnt == n)
+                return currBit;
+        }
+    }
+
+    for (; cnt < n; wrd++) {
+        cnt += POPCOUNT(_bits[wrd]);
+    }
+    cnt -= POPCOUNT(_bits[--wrd]);
+
+    for (currBit = wrd*word_s; cnt < n; currBit++) {
+        if (get(currBit) == 1) {
             cnt++;
         }
     }    
 
-    return i-1;
+    return currBit-1;
 }
 
 // VECTOR OPERATIONS
