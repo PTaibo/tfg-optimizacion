@@ -5,35 +5,35 @@
 #define RANKBLK (600) // Default rank block size
 
 // CONSTRUCTORS AND DESTRUCTORS
-BitMap::BitMap(size_t size, size_t rankBlkSize)
+BitMap::BitMap(bitIdx_t size, bitIdx_t bitsPerRankBlk)
 {
     _size = size;
     // Int ceiling division: (A + B - 1) / B
     _bits.resize((_size + word_s - 1) / word_s, 0); 
-    _rankBlk = rankBlkSize;
-    if (!_rankBlk) {
-        _rankBlk = RANKBLK;
+    _bitsPerBlk = bitsPerRankBlk;
+    if (!_bitsPerBlk) {
+        _bitsPerBlk = RANKBLK;
     }
-    ulong ceiling_div = (_size + _rankBlk - 1) / _rankBlk;
+    ulong ceiling_div = (_size + _bitsPerBlk - 1) / _bitsPerBlk;
     _rankS.resize(ceiling_div + 1, 0);
     _changedBitmap = false;
     _lazyRank.resize(ceiling_div + 1, 0);
 }
 
-BitMap::BitMap(std::string bits, size_t rankBlkSize)
+BitMap::BitMap(std::string bits, bitIdx_t bitsPerRankBlk)
 {
     _size = bits.size();
     _bits.resize((bits.size() + word_s - 1) / word_s, 0);
-    _rankBlk = rankBlkSize;
-    if (!_rankBlk) {
-        _rankBlk = RANKBLK;
+    _bitsPerBlk = bitsPerRankBlk;
+    if (!_bitsPerBlk) {
+        _bitsPerBlk = RANKBLK;
     }
-    ulong ceiling_div = (bits.size() + _rankBlk - 1) / _rankBlk;
+    ulong ceiling_div = (bits.size() + _bitsPerBlk - 1) / _bitsPerBlk;
     _rankS.resize(ceiling_div + 1, 0);
     _changedBitmap = false;
     _lazyRank.resize(ceiling_div + 1, 0);
 
-    for(size_t i = 0; i < bits.size(); i++) {
+    for(bitIdx_t i = 0; i < bits.size(); i++) {
         if (bits[i] == '1') {
             set(i);
         }
@@ -44,7 +44,7 @@ BitMap::BitMap(const BitMap& bitmap)
 {
     _size = bitmap._size;
     _bits.assign(bitmap._bits.begin(), bitmap._bits.end());
-    _rankBlk = bitmap._rankBlk;
+    _bitsPerBlk = bitmap._bitsPerBlk;
     _rankS.assign(bitmap._rankS.begin(), bitmap._rankS.end());
     _changedBitmap = bitmap._changedBitmap;
     _lazyRank.assign(bitmap._lazyRank.begin(), bitmap._lazyRank.end());
@@ -53,67 +53,67 @@ BitMap::BitMap(const BitMap& bitmap)
 BitMap::~BitMap() {}
 
 // SINGLE BIT OPERATIONS
-BitMap::word_t BitMap::getMask(size_t idx)
+BitMap::word_t BitMap::getMask(bitIdx_t idx)
 {
-    size_t msb = word_s - 1;
-    size_t bit = msb - (idx % word_s);
+    bitIdx_t msb = word_s - 1;
+    bitIdx_t bit = msb - (idx % word_s);
     return (word_t)1 << bit; // Mask with 1 in pos bit
 }
 
-int8_t BitMap::get(size_t idx)
+int8_t BitMap::get(bitIdx_t idx)
 {
     if (idx >= _size)
         return -1;
 
-    size_t word = idx / word_s;
+    bitIdx_t word = idx / word_s;
     word_t mask = getMask(idx);
     return (_bits[word] & mask) ? 1 : 0;
 }
 
-int8_t BitMap::set(size_t idx)
+int8_t BitMap::set(bitIdx_t idx)
 {
     if (idx >= _size)
         return 0;
 
-    size_t word = idx / word_s;
+    bitIdx_t word = idx / word_s;
     word_t mask = getMask(idx);
     _bits[word] = _bits[word] | mask;
     _changedBitmap = true;
-    _lazyRank[(idx/_rankBlk)+1]++;
+    _lazyRank[(idx/_bitsPerBlk)+1]++;
 
     return 1;
 }
 
-int8_t BitMap::clear(size_t idx)
+int8_t BitMap::clear(bitIdx_t idx)
 {
     if (idx >= _size)
         return 0;
 
-    size_t word = idx / word_s;
+    bitIdx_t word = idx / word_s;
     word_t mask = ~getMask(idx);
     _bits[word] = _bits[word] & mask;
     _changedBitmap = true;
-    _lazyRank[(idx/_rankBlk)+1]--;
+    _lazyRank[(idx/_bitsPerBlk)+1]--;
 
     return 1;
 }
 
-int8_t BitMap::toggle(size_t idx)
+int8_t BitMap::toggle(bitIdx_t idx)
 {
     if (idx >= _size)
         return -1;
 
-    size_t word = idx / word_s;
+    bitIdx_t word = idx / word_s;
     word_t mask = getMask(idx);
     _bits[word] = _bits[word] ^ mask;
     _changedBitmap = true;
 
     if (_bits[word] & mask) {
-        _lazyRank[(idx/_rankBlk)+1]++;
+        _lazyRank[(idx/_bitsPerBlk)+1]++;
         return 1;
     }
     else {
-        _lazyRank[(idx/_rankBlk)+1]--;
+        _lazyRank[(idx/_bitsPerBlk)+1]--;
         return 0;
     }
 }
@@ -130,7 +130,7 @@ void BitMap::updateRank()
     _changedBitmap = false;
 }
 
-long BitMap::wrd_rank(size_t idx)
+long BitMap::wrdRank(bitIdx_t idx)
 {
     if (idx >= _size)
         return -1;
@@ -138,16 +138,16 @@ long BitMap::wrd_rank(size_t idx)
     if (_changedBitmap)
         updateRank();
 
-    size_t blkIdx = idx/_rankBlk;
-    size_t ans = _rankS[blkIdx];
-    size_t fstWrd = blkIdx*(_rankBlk/word_s);
+    bitIdx_t blkIdx = idx/_bitsPerBlk;
+    bitIdx_t ans = _rankS[blkIdx];
+    size_t fstWrd = blkIdx*(_bitsPerBlk/word_s);
     size_t lstWrd = (idx+1)/word_s;
     
     for (size_t currWrd = fstWrd; currWrd < lstWrd; currWrd++) {
         ans += POPCOUNT(_bits[currWrd]);
     }
 
-    for (size_t i = lstWrd*word_s; i < idx+1; i++) {
+    for (bitIdx_t i = lstWrd*word_s; i < idx+1; i++) {
         if (get(i) == 1) {
             ans++;
         }
@@ -156,7 +156,7 @@ long BitMap::wrd_rank(size_t idx)
     return ans;
 }
 
-long BitMap::rank(size_t idx)
+long BitMap::rank(bitIdx_t idx)
 {
     if (idx >= _size)
         return -1;
@@ -164,9 +164,9 @@ long BitMap::rank(size_t idx)
     if (_changedBitmap)
         updateRank();
 
-    size_t blkIdx = (idx+1)/_rankBlk; // NOTE: idx+1 por si idx es el último elmento del bloque
+    size_t blkIdx = (idx+1)/_bitsPerBlk; // NOTE: idx+1 por si idx es el último elmento del bloque
     size_t ans = _rankS[blkIdx];
-    size_t currBit = _rankBlk*blkIdx;
+    bitIdx_t currBit = _bitsPerBlk*blkIdx;
 
     size_t fstWrd = (currBit + word_s - 1) / word_s; // NOTE: Integer ceiling division
     if (fstWrd*word_s < idx+1) {
@@ -182,7 +182,7 @@ long BitMap::rank(size_t idx)
         currBit = lstWrd*word_s;
     }
 
-    for (size_t i = currBit; i < idx+1; i++) {
+    for (bitIdx_t i = currBit; i < idx+1; i++) {
         if (get(i) == 1)
             ans++;
     }
@@ -190,7 +190,7 @@ long BitMap::rank(size_t idx)
     return ans;
 }
 
-long BitMap::select0(size_t n)
+long BitMap::select0(bitIdx_t n)
 {
     if (_changedBitmap)
         updateRank();
@@ -199,8 +199,9 @@ long BitMap::select0(size_t n)
         return -1;
     }
 
-    size_t cnt = 0;
-    size_t i, pcount;
+    bitIdx_t cnt = 0;
+    size_t i;
+    bitIdx_t pcount;
     for (i = 0; i < _bits.size(); i++) {
         pcount = word_s - POPCOUNT(_bits[i]);
         if (cnt + pcount >= n) {
@@ -208,7 +209,7 @@ long BitMap::select0(size_t n)
         }
         cnt += pcount;
     }
-    for (size_t ans = i * word_s; ans < _size; ans++) {
+    for (bitIdx_t ans = i * word_s; ans < _size; ans++) {
         if (get(ans) == 0) {
             cnt++;
             if (cnt == n)
@@ -218,7 +219,7 @@ long BitMap::select0(size_t n)
     return -1;
 }
 
-long BitMap::select1(size_t n)
+long BitMap::select1(bitIdx_t n)
 {
     if (_changedBitmap)
         updateRank();
@@ -239,8 +240,8 @@ long BitMap::select1(size_t n)
         }
     }
 
-    size_t cnt = _rankS[l];
-    size_t currBit = _rankBlk*l;
+    bitIdx_t cnt = _rankS[l];
+    bitIdx_t currBit = _bitsPerBlk*l;
     size_t wrd = (currBit + word_s - 1) / word_s;
     for (; currBit < wrd*word_s; currBit++) {
         if (get(currBit) == 1) {
@@ -265,11 +266,7 @@ long BitMap::select1(size_t n)
 }
 
 // VECTOR OPERATIONS
-bool BitMap::isEmpty()
-{
-    return _size == 0;
-}
-size_t BitMap::size()
+bitIdx_t BitMap::size()
 {
     return _size;
 }
@@ -277,7 +274,7 @@ size_t BitMap::size()
 std::string BitMap::toString()
 {
     std::string bitmap (_size, '0');
-    for (size_t i = 0; i < _size; i++) {
+    for (bitIdx_t i = 0; i < _size; i++) {
         bitmap[i] = get(i) + '0';
     }
     return bitmap;

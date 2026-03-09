@@ -6,6 +6,7 @@
 #include <string>
 
 #define POPCOUNT(x) __builtin_popcountll(x)
+using bitIdx_t = size_t;
 
 /// @brief Basic implementation of a bitmap
 class BitMap
@@ -15,9 +16,9 @@ class BitMap
         using word_t = uint64_t; //!< Type used for bit vector
         const size_t word_s = sizeof(word_t)*8; //!< Size in bits of word_t
 
-        size_t _size = 0; //!< Size in bits of the bitmap
+        bitIdx_t _size = 0; //!< Size in bits of the bitmap
         std::vector<word_t> _bits; //!< Bit vector
-        size_t _rankBlk = 0; //!< Number of bits per block of rankS
+        bitIdx_t _bitsPerBlk = 0; //!< Number of bits per block of rankS
         std::vector<uint32_t> _rankS; //!< Rank helper structure
         bool _changedBitmap = false;
         std::vector<int32_t> _lazyRank; //!< Records bit changes
@@ -26,7 +27,7 @@ class BitMap
     private:
         // @param idx Bit position between 0 and _size-1
         // @return Word mask for the bit in that position
-        word_t getMask(size_t idx);
+        word_t getMask(bitIdx_t idx);
         // @brief Updates rankS using the changes stored in lazyRank
         void updateRank();
 
@@ -34,10 +35,10 @@ class BitMap
         // CONSTRUCTORS AND DESTRUCTORS
         // @param size Size of bitmap in bits
         // @return Bitmap initialized to 0
-        BitMap(size_t size, size_t rankBlkSize = 0);
+        BitMap(bitIdx_t size, bitIdx_t bitsPerRankBlk = 0);
         // @brief Converts the string into a bitmap
-        // @param bits String of 0s and 1s
-        BitMap(std::string bits, size_t rankBlkSize = 0);
+        // @param bits String of ASCII 0s and 1s
+        BitMap(std::string bits, bitIdx_t bitsPerRankBlk = 0);
         // @brief Creates a copy of bitmap
         BitMap(const BitMap& bitmap);
 
@@ -46,39 +47,38 @@ class BitMap
         // SINGLE BIT OPERATIONS
         // @param idx Position between 0 and size()-1
         // @return Value of bit or -1 if out of bounds
-        int8_t get(size_t idx);
+        int8_t get(bitIdx_t idx);
         // @brief Sets bit to 1
         // @param idx Position between 0 and size()-1
         // @return 0 if out of bounds (error)
-        int8_t set(size_t idx);
+        int8_t set(bitIdx_t idx);
         // @brief Sets bit to 0
         // @param idx Position between 0 and size()-1
         // @return 0 if out of bounds (error)
-        int8_t clear(size_t idx);
+        int8_t clear(bitIdx_t idx);
         // @brief Toggles bit
         // @param idx Position between 0 and size()-1
         // @return New value of bit or -1 if out of bounds
-        int8_t toggle(size_t idx);
+        int8_t toggle(bitIdx_t idx);
 
         // BITMAP OPERATIONS
         // @param idx Position between 0 and size()-1
         // @return Number of ones up to that idx (included)
-        long rank(size_t idx);
-        // @brief Only works if _rankBlk is divisible by word_s
+        long rank(bitIdx_t idx);
+        // @brief Only works if _bitsPerBlk is divisible by word_s
         // @param idx Position between 0 and size()-1
         // @return Number of ones up to that idx (included)
-        long wrd_rank(size_t idx);
+        long wrdRank(bitIdx_t idx);
         // @brief Get position of the nth 0
         // @return Position of the bit or -1 if not found
-        long select0(size_t n);
+        long select0(bitIdx_t n);
         // @brief Get position of the nth 1
         // @return Position of the bit or -1 if not found
-        long select1(size_t n);
+        long select1(bitIdx_t n);
 
         // BASIC VECTOR OPERATIONS
-        bool isEmpty();
         // @return The size of the bitmap in bits
-        size_t size();
+        bitIdx_t size();
         // @return Bitmap as string of 0s and 1s
         std::string toString();
 };

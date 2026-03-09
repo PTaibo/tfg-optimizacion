@@ -27,10 +27,9 @@ void test(std::string msg, bool correct)
 void test_constructor_zeros()
 {
     BitMap zeros(5);
-    assert(!zeros.isEmpty());
     bool size = (zeros.size() == 5);
     bool all0 = true;
-    for (size_t i = 0; i < zeros.size(); i++) {
+    for (bitIdx_t i = 0; i < zeros.size(); i++) {
         if (zeros.get(i) != 0) {
             all0 = false;
             break;
@@ -47,10 +46,9 @@ void test_constructor_str()
 {
     std::string bits = "01001101001101011000";
     BitMap vBits(bits);
-    assert(!vBits.isEmpty());
     bool size = (bits.size() == vBits.size());
     bool sameBits = true;
-    for (size_t i = 0; i < vBits.size() && i < bits.size(); i++) {
+    for (bitIdx_t i = 0; i < vBits.size() && i < bits.size(); i++) {
         if (bits[i] - '0' != vBits.get(i)) {
             sameBits = false;
             break;
@@ -71,7 +69,7 @@ void test_constructor_copy()
     BitMap copy(original);
     bool size = (original.size() == copy.size());
     bool sameBits = true;
-    for (size_t i = 0; i < original.size() && i < copy.size(); i++) {
+    for (bitIdx_t i = 0; i < original.size() && i < copy.size(); i++) {
         if (copy.get(i) != original.get(i)) {
             sameBits = false;
             break;
@@ -292,7 +290,7 @@ void test_random_wrd_rank(size_t size, int tests)
     bool works = true;
     for (int i = 0; i < tests; i++) {
         size_t idx = rand() % size;
-        if (bmap.wrd_rank(idx) != ones[idx]) {
+        if (bmap.wrdRank(idx) != ones[idx]) {
             works = false;
         }
     }
