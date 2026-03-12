@@ -148,7 +148,8 @@ long BitMap::wrdRank(bitIdx_t idx)
     }
 
     if ( lstWrd*word_s < idx+1 ) {
-        ans += POPCOUNT(_bits[lstWrd] >> (word_s - (idx+1)));
+        size_t bitInWrd = (idx+1) % word_s;
+        ans += POPCOUNT(_bits[lstWrd] >> (word_s - bitInWrd));
     }
 
     return ans;
