@@ -5,7 +5,7 @@ SRC=test_basic.cpp bitmap.cpp
 OBJ=$(SRC:.cpp=.o)
 
 BUILD=release
-cppflags.release=-O2
+cppflags.release=-O2 -march=native
 cppflags.debug=-g3 -O0 -Wextra
 CPPFLAGS=$(cppflags.$(BUILD)) -Wall
 LDLIBS=
