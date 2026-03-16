@@ -166,16 +166,15 @@ long BitMap::rank(bitIdx_t idx)
     size_t blkIdx = (idx+1)/_bitsPerBlk; // NOTE: idx+1 por si idx es el último elmento del bloque
     size_t ans = _rankS[blkIdx];
     bitIdx_t currBit = _bitsPerBlk*blkIdx;
+    if (currBit == (idx+1))
+        return ans;
 
     size_t wrd = (currBit + word_s - 1) / word_s; // NOTE: Integer ceiling division
     if (wrd*word_s > idx) {
-        // word_t piece = (_bits[wrd-1] << (currBit%word_s));
-        // piece = piece >> ( word_s - ((idx+1) % word_s) );
-        // ans += POPCOUNT(piece);
-        for (bitIdx_t i = currBit; i < idx+1; i++) {
-            if (get(i) == 1)
-                ans++;
-        }
+        word_t mask = (~0);
+        mask >>= (currBit%word_s);
+        mask &= (word_t)(~0) << ( word_s - ((idx+1) % word_s) );
+        ans += POPCOUNT(_bits[wrd-1] & mask);
 
         return ans;
     }
