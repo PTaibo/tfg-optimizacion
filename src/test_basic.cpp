@@ -171,7 +171,7 @@ void test_select0()
     if (bmap.select0(1) != 0) works = false;
     if (bmap.select0(6) != 13) works = false;
     if (bmap.select0(4) != 9) works = false;
-    test("select()", works);
+    test("select0()", works);
     std::cout << "-----------------------------------\n";
 }
 
@@ -324,7 +324,7 @@ void test_random_select0(size_t size, int tests)
             works = false;
         }
     }
-    test("Random select()", works);
+    test("Random select0()", works);
     std::cout << "-----------------------------------\n";
 }
 

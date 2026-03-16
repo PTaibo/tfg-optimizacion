@@ -204,24 +204,42 @@ long BitMap::select0(bitIdx_t n)
         return -1;
     }
 
-    bitIdx_t cnt = 0;
-    size_t i;
-    bitIdx_t pcount;
-    for (i = 0; i < _bits.size(); i++) {
-        pcount = word_s - POPCOUNT(_bits[i]);
-        if (cnt + pcount >= n) {
-            break;
+    // Binary search in rank structure
+    int l = -1;
+    int r = _rankS.size();
+    while (r > l+1) {
+        int m = (l+r)/2;
+        if ((m*_bitsPerBlk) - _rankS[m] < n) {
+            l = m;
         }
-        cnt += pcount;
+        else {
+            r = m;
+        }
     }
-    for (bitIdx_t ans = i * word_s; ans < _size; ans++) {
-        if (get(ans) == 0) {
+
+    bitIdx_t currBit = _bitsPerBlk*l;
+    bitIdx_t cnt = currBit - _rankS[l];
+    size_t wrd = (currBit + word_s - 1) / word_s;
+    for (; currBit < wrd*word_s; currBit++) {
+        if (get(currBit) == 0) {
             cnt++;
             if (cnt == n)
-                return ans;
+                return currBit;
         }
     }
-    return -1;
+
+    for (; cnt < n; wrd++) {
+        cnt += word_s - POPCOUNT(_bits[wrd]);
+    }
+    cnt -= word_s - POPCOUNT(_bits[--wrd]);
+
+    for (currBit = wrd*word_s; cnt < n; currBit++) {
+        if (get(currBit) == 0) {
+            cnt++;
+        }
+    }    
+
+    return currBit-1;
 }
 
 long BitMap::select1(bitIdx_t n)
