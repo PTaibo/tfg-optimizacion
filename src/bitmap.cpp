@@ -262,15 +262,26 @@ long BitMap::select1(bitIdx_t n)
             r = m;
         }
     }
-
     bitIdx_t cnt = _rankS[l];
     bitIdx_t currBit = _bitsPerBlk*l;
+    if (cnt == n)
+        return currBit-1;
+
+    // TODO: Check if quicker than select0
+    // If not, get rid of conditions and just use for loop
     size_t wrd = (currBit + word_s - 1) / word_s;
-    for (; currBit < wrd*word_s; currBit++) {
-        if (get(currBit) == 1) {
-            cnt++;
-            if (cnt == n)
-                return currBit;
+    if (currBit % word_s) {
+        int pop = POPCOUNT(_bits[wrd-1] << (currBit%word_s));
+        if (cnt+pop < n) {
+            cnt += pop;
+        } else {
+            for (; currBit < wrd*word_s; currBit++) {
+                if (get(currBit) == 1) {
+                    cnt++;
+                    if (cnt == n)
+                        return currBit;
+                }
+            }
         }
     }
 
