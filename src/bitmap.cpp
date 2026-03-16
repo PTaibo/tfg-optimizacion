@@ -167,23 +167,30 @@ long BitMap::rank(bitIdx_t idx)
     size_t ans = _rankS[blkIdx];
     bitIdx_t currBit = _bitsPerBlk*blkIdx;
 
-    size_t fstWrd = (currBit + word_s - 1) / word_s; // NOTE: Integer ceiling division
-    if (fstWrd*word_s < idx+1) {
-        for (; currBit < fstWrd*word_s; currBit++) {
-            if (get(currBit) == 1)
+    size_t wrd = (currBit + word_s - 1) / word_s; // NOTE: Integer ceiling division
+    if (wrd*word_s > idx) {
+        // word_t piece = (_bits[wrd-1] << (currBit%word_s));
+        // piece = piece >> ( word_s - ((idx+1) % word_s) );
+        // ans += POPCOUNT(piece);
+        for (bitIdx_t i = currBit; i < idx+1; i++) {
+            if (get(i) == 1)
                 ans++;
         }
 
-        size_t lstWrd = (idx+1)/word_s;
-        for (size_t currWrd = fstWrd; currWrd < lstWrd; currWrd++) {
-            ans += POPCOUNT(_bits[currWrd]);
-        }
-        currBit = lstWrd*word_s;
+        return ans;
     }
 
-    for (bitIdx_t i = currBit; i < idx+1; i++) {
-        if (get(i) == 1)
-            ans++;
+    if (currBit % word_s)
+        ans += POPCOUNT(_bits[wrd-1] << (currBit%word_s));
+
+    size_t lstWrd = (idx+1)/word_s;
+    for (; wrd < lstWrd; wrd++)
+        ans += POPCOUNT(_bits[wrd]);
+
+    currBit = wrd*word_s;
+    if ( wrd*word_s < idx+1 ) {
+        size_t shift = word_s - ((idx+1) % word_s);
+        ans += POPCOUNT(_bits[wrd] >> shift);
     }
 
     return ans;
