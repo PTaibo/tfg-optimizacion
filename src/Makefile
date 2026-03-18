@@ -1,28 +1,32 @@
-GCC=g++
+GPP=g++
 
 TARGET=test_basic.elf
-SRC=test_basic.cpp bitmap.cpp
-OBJ=$(SRC:.cpp=.o)
+CSRC=$(wildcard includes/*.c)
+CPPSRC=test_basic.cpp bitmap.cpp \
+		$(wildcard includes/*.cpp)
+OBJ=$(CSRC:.c=.o) $(CPPSRC:.cpp=.o)
 
 BUILD=release
-cppflags.release=-O2 -march=native
+cppflags.release=-O2 -march=native -D POLYBENCH_TIME
 cppflags.debug=-g3 -O0 -Wextra
 CPPFLAGS=$(cppflags.$(BUILD)) -Wall
-LDLIBS=
-LDFLAGS=
+LDLIBS=-I./includes
 
 ${TARGET}: ${OBJ}
-	$(GCC) ${CFLAGS} ${LDFLAGS} $^ -o $@
+	$(GPP) ${CPPFLAGS} $^ -o $@
 
 %.o: %.c
-	$(GCC) ${CFLAGS} ${LDLIBS} -c $^ -o $@
+	$(GPP) ${CPPFLAGS} ${LDLIBS} -c $^ -o $@
+
+%.o: %.cpp
+	$(GPP) ${CPPFLAGS} ${LDLIBS} -c $^ -o $@
 
 run: ${TARGET}
 	./${TARGET}
 
 clean:
-	${RM} ${OBJ}
+	${RM} $(filter %.o,${OBJ})
 
 cleanall:
-	${RM} ${TARGET} ${OBJ}
+	${RM} ${TARGET} $(filter %.o,${OBJ})
 
