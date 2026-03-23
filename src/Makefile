@@ -19,8 +19,8 @@ LDLIBS=-I./includes
 cbench: benchmark.o ${OBJ}
 	$(GPP) ${CPPFLAGS} $^ -o benchmark.elf
 
-bench: cbench
-	./benchmark.elf
+bench:
+	bash ./scripts/benchmark_run.sh
 
 ctest: test_basic.o ${OBJ}
 	$(GPP) ${CPPFLAGS} $^ -o tests.elf
