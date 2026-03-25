@@ -27,7 +27,7 @@ for bits in "${wordBits[@]}"; do
 
     for words in "${wordMult[@]}"; do
         echo "$words word per rank block"
-        sed -i "/#define RANKBLK / s/[0-9]\+/$((${blk}*${bits}))/" ./bitmap.cpp
+        sed -i "/#define RANKBLK / s/[0-9]\+/$((${words}*${bits}))/" ./bitmap.cpp
 
         make cleanall > /dev/null
         make cbench &> /dev/null

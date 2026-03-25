@@ -29,8 +29,8 @@ test: ctest
 	./tests.elf
 
 clean:
-	${RM} $(filter %.o,${OBJ})
+	${RM} $(filter %.o,${OBJ}) ./*.o
 
 cleanall:
-	${RM} *.elf $(filter %.o,${OBJ})
+	${RM} *.elf $(filter %.o,${OBJ}) ./*.o
 
