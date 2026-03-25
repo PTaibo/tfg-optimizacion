@@ -31,11 +31,11 @@ def parse_file(file_name):
 
     return data
 
-def make_plot(data, bits, select):
+def make_plot(data, bits, select, plot):
     bits = str(bits)
     select = str(select)
 
-    x_label = ['3b', '300b','1w', '2w', '3w', '4w']   
+    x_label = ['3b', '300b', '600b', '1w', '2w', '10w', '30w']   
     x_coord = [i+1 for i in range(len(x_label))]
     height = []
 
@@ -52,19 +52,24 @@ def make_plot(data, bits, select):
     print(height)
 
     # plt.bar(x_coord, height, tick_label = x_label, width = 0.8, color = ['red', 'green'])
-    plt.bar(x_coord, height)
+    plot.bar(x_coord, height, color = ['blue', 'blue', 'blue', 'green', 'green', 'green', 'green'])
 
-    plt.xticks(x_coord, x_label)
-    plt.xlabel('Bits per block')
-    plt.ylabel('Seconds')
-    plt.title('Select' + select + ' for ' + bits + ' bit words')
+    plot.set_xticks(x_coord)
+    plot.set_xticklabels(x_label)
+    plot.set_xlabel('Bits per block')
+    plot.set_ylabel('Seconds')
+    plot.set_title('Select' + select + ' for ' + bits + ' bit words')
 
-    # TODO: Change this to subplots https://matplotlib.org/stable/gallery/subplots_axes_and_figures/subplots_demo.html
-    plt.show()
     # plotPos.plot.show()
 
 if __name__ == "__main__":
     data = parse_file("bench.txt")
-    # _, axs = plt.subplots(3, 3)
-    make_plot(data, 8, 0)
+    _, axs = plt.subplots(2, 3)
+    make_plot(data, 8, 0, axs[0, 0])
+    make_plot(data, 32, 0, axs[0, 1])
+    make_plot(data, 64, 0, axs[0, 2])
+    make_plot(data, 8, 1, axs[1, 0])
+    make_plot(data, 32, 1, axs[1, 1])
+    make_plot(data, 64, 1, axs[1, 2])
+    plt.show()
 

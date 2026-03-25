@@ -1,0 +1,70 @@
+bash ./scripts/benchmark_run.sh
+8 bit word
+3 bits per rank block
+Select0 (s): 0.003046
+Select1 (s): 0.000870
+300 bits per rank block
+Select0 (s): 0.000841
+Select1 (s): 0.000648
+600 bits per rank block
+Select0 (s): 0.000742
+Select1 (s): 0.000636
+1 word per rank block
+Select0 (s): 0.001154
+Select1 (s): 0.001056
+2 word per rank block
+Select0 (s): 0.001219
+Select1 (s): 0.001051
+10 word per rank block
+Select0 (s): 0.001233
+Select1 (s): 0.001048
+30 word per rank block
+Select0 (s): 0.001157
+Select1 (s): 0.001038
+-------------------
+32 bit word
+3 bits per rank block
+Select0 (s): 0.003032
+Select1 (s): 0.001006
+300 bits per rank block
+Select0 (s): 0.001010
+Select1 (s): 0.000626
+600 bits per rank block
+Select0 (s): 0.000928
+Select1 (s): 0.000578
+1 word per rank block
+Select0 (s): 0.001196
+Select1 (s): 0.001009
+2 word per rank block
+Select0 (s): 0.001181
+Select1 (s): 0.001009
+10 word per rank block
+Select0 (s): 0.001178
+Select1 (s): 0.001018
+30 word per rank block
+Select0 (s): 0.001117
+Select1 (s): 0.000921
+-------------------
+64 bit word
+3 bits per rank block
+Select0 (s): 0.002911
+Select1 (s): 0.000898
+300 bits per rank block
+Select0 (s): 0.001553
+Select1 (s): 0.000831
+600 bits per rank block
+Select0 (s): 0.001637
+Select1 (s): 0.000877
+1 word per rank block
+Select0 (s): 0.001320
+Select1 (s): 0.001131
+2 word per rank block
+Select0 (s): 0.001309
+Select1 (s): 0.001144
+10 word per rank block
+Select0 (s): 0.001358
+Select1 (s): 0.001131
+30 word per rank block
+Select0 (s): 0.001286
+Select1 (s): 0.001132
+-------------------

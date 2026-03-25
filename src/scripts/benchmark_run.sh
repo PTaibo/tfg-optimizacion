@@ -6,8 +6,8 @@ CYAN='\033[0;36m'
 NC='\033[0m' # No colour
 
 wordBits=(8 32 64)
-bitsPerBlk=(3 600)
-wordMult=(1 2 3 4)
+bitsPerBlk=(3 300 600)
+wordMult=(1 2 10 30)
 
 cp ./bitmap.h ./bitmap.h.bckp
 cp ./bitmap.cpp ./bitmap.cpp.bckp
