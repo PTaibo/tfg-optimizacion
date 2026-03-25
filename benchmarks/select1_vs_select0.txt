@@ -1,70 +1,70 @@
 bash ./scripts/benchmark_run.sh
 8 bit word
 3 bits per rank block
-Select0 (s): 0.003046
-Select1 (s): 0.000870
+Select0 (s): 0.002806
+Select1 (s): 0.000892
 300 bits per rank block
-Select0 (s): 0.000841
-Select1 (s): 0.000648
+Select0 (s): 0.000736
+Select1 (s): 0.000595
 600 bits per rank block
-Select0 (s): 0.000742
-Select1 (s): 0.000636
+Select0 (s): 0.000692
+Select1 (s): 0.000597
 1 word per rank block
-Select0 (s): 0.001154
-Select1 (s): 0.001056
+Select0 (s): 0.001473
+Select1 (s): 0.000785
 2 word per rank block
-Select0 (s): 0.001219
-Select1 (s): 0.001051
+Select0 (s): 0.001148
+Select1 (s): 0.000760
 10 word per rank block
-Select0 (s): 0.001233
-Select1 (s): 0.001048
+Select0 (s): 0.000792
+Select1 (s): 0.000648
 30 word per rank block
-Select0 (s): 0.001157
-Select1 (s): 0.001038
+Select0 (s): 0.000704
+Select1 (s): 0.000601
 -------------------
 32 bit word
 3 bits per rank block
-Select0 (s): 0.003032
-Select1 (s): 0.001006
+Select0 (s): 0.003069
+Select1 (s): 0.000864
 300 bits per rank block
-Select0 (s): 0.001010
-Select1 (s): 0.000626
+Select0 (s): 0.001065
+Select1 (s): 0.000661
 600 bits per rank block
-Select0 (s): 0.000928
-Select1 (s): 0.000578
+Select0 (s): 0.001007
+Select1 (s): 0.000645
 1 word per rank block
-Select0 (s): 0.001196
-Select1 (s): 0.001009
+Select0 (s): 0.000991
+Select1 (s): 0.000759
 2 word per rank block
-Select0 (s): 0.001181
-Select1 (s): 0.001009
+Select0 (s): 0.000855
+Select1 (s): 0.000699
 10 word per rank block
-Select0 (s): 0.001178
-Select1 (s): 0.001018
+Select0 (s): 0.000750
+Select1 (s): 0.000649
 30 word per rank block
-Select0 (s): 0.001117
-Select1 (s): 0.000921
+Select0 (s): 0.000715
+Select1 (s): 0.000630
 -------------------
 64 bit word
 3 bits per rank block
-Select0 (s): 0.002911
-Select1 (s): 0.000898
+Select0 (s): 0.003403
+Select1 (s): 0.000931
 300 bits per rank block
-Select0 (s): 0.001553
-Select1 (s): 0.000831
+Select0 (s): 0.001597
+Select1 (s): 0.000860
 600 bits per rank block
-Select0 (s): 0.001637
-Select1 (s): 0.000877
+Select0 (s): 0.001807
+Select1 (s): 0.000917
 1 word per rank block
-Select0 (s): 0.001320
-Select1 (s): 0.001131
+Select0 (s): 0.001054
+Select1 (s): 0.000861
 2 word per rank block
-Select0 (s): 0.001309
-Select1 (s): 0.001144
+Select0 (s): 0.000925
+Select1 (s): 0.000817
 10 word per rank block
-Select0 (s): 0.001358
-Select1 (s): 0.001131
+Select0 (s): 0.000855
+Select1 (s): 0.000778
 30 word per rank block
-Select0 (s): 0.001286
-Select1 (s): 0.001132
+Select0 (s): 0.000871
+Select1 (s): 0.000739
 -------------------

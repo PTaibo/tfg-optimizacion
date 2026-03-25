@@ -1,0 +1,49 @@
+bash ./scripts/benchmark_run.sh
+8 bit word
+3 bits per rank block
+Rank (s): 0.002957
+300 bits per rank block
+Rank (s): 0.000741
+600 bits per rank block
+Rank (s): 0.000693
+1 word per rank block
+Rank (s): 0.001470
+2 word per rank block
+Rank (s): 0.001231
+10 word per rank block
+Rank (s): 0.000762
+30 word per rank block
+Rank (s): 0.000602
+-------------------
+32 bit word
+3 bits per rank block
+Rank (s): 0.002664
+300 bits per rank block
+Rank (s): 0.001062
+600 bits per rank block
+Rank (s): 0.001255
+1 word per rank block
+Rank (s): 0.001132
+2 word per rank block
+Rank (s): 0.000812
+10 word per rank block
+Rank (s): 0.000831
+30 word per rank block
+Rank (s): 0.000717
+-------------------
+64 bit word
+3 bits per rank block
+Rank (s): 0.003401
+300 bits per rank block
+Rank (s): 0.001511
+600 bits per rank block
+Rank (s): 0.001565
+1 word per rank block
+Rank (s): 0.000915
+2 word per rank block
+Rank (s): 0.001560
+10 word per rank block
+Rank (s): 0.000899
+30 word per rank block
+Rank (s): 0.000910
+-------------------
