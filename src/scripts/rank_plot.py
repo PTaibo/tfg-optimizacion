@@ -1,4 +1,8 @@
+#!/bin/python
+
 import re
+import os
+import sys
 import matplotlib.pyplot as plt
 
 def parse_file(file_name):
@@ -56,7 +60,15 @@ def make_plot(data, bits, plot):
     plot.set_title(bits + ' bit words')
 
 if __name__ == "__main__":
-    data = parse_file("bench.txt")
+    if (len(sys.argv) <= 1):
+        print("No benchmark file indicated")
+        exit()
+
+    if not os.path.exists(sys.argv[1]):
+        print("The file doesn't exist")
+        exit()
+
+    data = parse_file(sys.argv[1])
     _, axs = plt.subplots(1, 3)
     make_plot(data, 8, axs[0])
     make_plot(data, 32, axs[1])
