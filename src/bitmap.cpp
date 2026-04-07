@@ -2,7 +2,7 @@
 
 #include <assert.h>
 
-#define RANKBLK (600) // Default rank block size
+#define RANKBLK (960) // Default rank block size
 
 // CONSTRUCTORS AND DESTRUCTORS
 BitMap::BitMap(bitIdx_t size, bitIdx_t bitsPerRankBlk)

@@ -10,6 +10,8 @@ cppflags.debug=-g3 -O0 -Wextra
 CPPFLAGS=$(cppflags.$(BUILD)) -Wall
 LDLIBS=-I./includes
 
+BENCH=0
+
 %.o: %.c
 	$(GPP) ${CPPFLAGS} ${LDLIBS} -c $^ -o $@
 
@@ -20,7 +22,7 @@ cbench: benchmark.o ${OBJ}
 	$(GPP) ${CPPFLAGS} $^ -o benchmark.elf
 
 bench:
-	bash ./scripts/benchmark_run.sh
+	bash ./scripts/run_benchmarks.sh
 
 ctest: test_basic.o ${OBJ}
 	$(GPP) ${CPPFLAGS} $^ -o tests.elf

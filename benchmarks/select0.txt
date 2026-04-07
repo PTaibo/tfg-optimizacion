@@ -1,48 +1,48 @@
 8 bit word
 3 bits per rank block
-Rank (s): 0.003234
+Select0 (s): 0.003472
 300 bits per rank block
-Rank (s): 0.001116
+Select0 (s): 0.000861
 600 bits per rank block
-Rank (s): 0.000991
+Select0 (s): 0.000846
 1 word per rank block
-Rank (s): 0.001610
+Select0 (s): 0.001945
 2 word per rank block
-Rank (s): 0.001380
+Select0 (s): 0.001266
 10 word per rank block
-Rank (s): 0.000952
+Select0 (s): 0.000856
 30 word per rank block
-Rank (s): 0.000714
+Select0 (s): 0.001000
 -------------------
 32 bit word
 3 bits per rank block
-Rank (s): 0.003268
+Select0 (s): 0.003162
 300 bits per rank block
-Rank (s): 0.001188
+Select0 (s): 0.001285
 600 bits per rank block
-Rank (s): 0.000960
+Select0 (s): 0.000928
 1 word per rank block
-Rank (s): 0.001099
+Select0 (s): 0.000955
 2 word per rank block
-Rank (s): 0.000822
+Select0 (s): 0.000783
 10 word per rank block
-Rank (s): 0.000674
+Select0 (s): 0.000917
 30 word per rank block
-Rank (s): 0.000660
+Select0 (s): 0.000901
 -------------------
 64 bit word
 3 bits per rank block
-Rank (s): 0.002859
+Select0 (s): 0.002917
 300 bits per rank block
-Rank (s): 0.001356
+Select0 (s): 0.001429
 600 bits per rank block
-Rank (s): 0.001413
+Select0 (s): 0.001668
 1 word per rank block
-Rank (s): 0.001074
+Select0 (s): 0.001115
 2 word per rank block
-Rank (s): 0.000847
+Select0 (s): 0.001022
 10 word per rank block
-Rank (s): 0.001014
+Select0 (s): 0.000826
 30 word per rank block
-Rank (s): 0.000927
+Select0 (s): 0.000750
 -------------------

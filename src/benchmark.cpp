@@ -95,13 +95,32 @@ void benchmark_rank(size_t size, int runs)
     polybench_print_instruments;
 }
 
-int main(void)
+int main (int argc, char *argv[])
 {
+    if (argc < 2) {
+        printf("No se ha indicado el benchmark a ejecutar\n");
+        return 1;
+    }
+
     polybench_prepare_instruments();
     size_t bmap_size = 10000000;
     int runs = 10000;
-    // benchmark_select_compare(bmap_size, runs);
-    benchmark_rank(bmap_size, runs);
+    switch (atoi(argv[1])) {
+        case 0:
+            benchmark_select0(bmap_size, runs);
+            break;
+        case 1:
+            benchmark_select1(bmap_size, runs);
+            break;
+        case 2:
+            benchmark_rank(bmap_size, runs);
+            break;
+        case 3:
+            benchmark_select_compare(bmap_size, runs);
+            break;
+        default:
+            return 2;
+    }
 
     return 0;
 }
