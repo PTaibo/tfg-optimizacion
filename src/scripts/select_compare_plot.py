@@ -1,4 +1,8 @@
+#!/bin/python
+
 import re
+import os
+import sys
 import matplotlib.pyplot as plt
 
 def parse_file(file_name):
@@ -57,19 +61,32 @@ def make_plot(data, bits, select, plot):
     plot.set_xticks(x_coord)
     plot.set_xticklabels(x_label)
     plot.set_xlabel('Bits per block')
-    plot.set_ylabel('Seconds')
+    # plot.set_ylabel('Seconds')
+    plot.yaxis.set_tick_params(labelleft=True)
     plot.set_title('Select' + select + ' for ' + bits + ' bit words')
 
     # plotPos.plot.show()
 
 if __name__ == "__main__":
-    data = parse_file("bench.txt")
-    _, axs = plt.subplots(2, 3)
+    if (len(sys.argv) <= 1):
+        print("No benchmark file indicated")
+        exit()
+
+    if not os.path.exists(sys.argv[1]):
+        print("The file doesn't exist")
+        exit()
+
+    data = parse_file(sys.argv[1])
+    _, axs = plt.subplots(2, 3, sharey=True)
+    axs[0,0].set_ylabel('Seconds')
+    axs[1,0].set_ylabel('Seconds')
     make_plot(data, 8, 0, axs[0, 0])
     make_plot(data, 32, 0, axs[0, 1])
     make_plot(data, 64, 0, axs[0, 2])
     make_plot(data, 8, 1, axs[1, 0])
     make_plot(data, 32, 1, axs[1, 1])
     make_plot(data, 64, 1, axs[1, 2])
+
+    plt.suptitle(f'Benchmark: {sys.argv[1]}', fontsize=16, fontweight='bold')
     plt.show()
 
