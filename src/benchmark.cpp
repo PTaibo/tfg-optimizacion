@@ -5,6 +5,46 @@
 #include "utils.h"
 #include "polybench.h"
 
+void benchmark_select0(size_t size, int runs)
+{
+    srand(time(0));
+    BitMap bmap(size);
+    for (size_t i = 0; i < size; i++) {
+        if (rand() % 2) {
+            bmap.set(i);
+        }
+    }
+
+    polybench_start_instruments;
+    for (int i = 0; i < runs; i++) {
+        size_t idx = rand() % size;
+        bmap.select0(idx);
+    }
+    polybench_stop_instruments;
+    std::cout << "Select0 (s): ";
+    polybench_print_instruments;
+}
+
+void benchmark_select1(size_t size, int runs)
+{
+    srand(time(0));
+    BitMap bmap(size);
+    for (size_t i = 0; i < size; i++) {
+        if (rand() % 2) {
+            bmap.set(i);
+        }
+    }
+
+    polybench_start_instruments;
+    for (int i = 0; i < runs; i++) {
+        size_t idx = rand() % size;
+        bmap.select1(idx);
+    }
+    polybench_stop_instruments;
+    std::cout << "Select1 (s): ";
+    polybench_print_instruments;
+}
+
 void benchmark_select_compare(size_t size, int runs)
 {
     srand(time(0));
