@@ -9,6 +9,6 @@ benchmarks=("select0"               # 0
 
 for ((i = 0; i < ${#benchmarks[@]}; i++)); do
     echo "Running ${benchmarks[$i]}"
-    bash $GIT/src/scripts/single_benchmark.sh $i | tee $GIT/benchmarks/${benchmarks[$i]}.txt > $GIT/benchmarks/${benchmarks[$i]}.txt
+    bash $GIT/src/scripts/single_benchmark.sh $i | tee $GIT/benchmarks/${benchmarks[$i]}.txt
 done
 
