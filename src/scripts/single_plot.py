@@ -24,7 +24,7 @@ def parse_file(file_name):
                 val = re.search(r'\d+', line)
                 wordsPerBlk = val.group()
                 bitsPerBlk = -1
-            elif "Rank" in line:
+            elif "(s)" in line:
                 val = re.search(r'\d+\.\d*', line)
                 seconds = val.group()
                 data.append([bits, bitsPerBlk, wordsPerBlk, seconds])
@@ -56,7 +56,8 @@ def make_plot(data, bits, plot):
     plot.set_xticks(x_coord)
     plot.set_xticklabels(x_label)
     plot.set_xlabel('Bits per block')
-    plot.set_ylabel('Seconds')
+    # plot.set_ylabel('Seconds')
+    plot.yaxis.set_tick_params(labelleft=True)
     plot.set_title(bits + ' bit words')
 
 if __name__ == "__main__":
@@ -69,9 +70,12 @@ if __name__ == "__main__":
         exit()
 
     data = parse_file(sys.argv[1])
-    _, axs = plt.subplots(1, 3)
+    _, axs = plt.subplots(1, 3, sharey=True)
+    axs[0].set_ylabel('Seconds')
     make_plot(data, 8, axs[0])
     make_plot(data, 32, axs[1])
     make_plot(data, 64, axs[2])
+
+    plt.suptitle(f'Benchmark: {sys.argv[1]}', fontsize=16, fontweight='bold')
     plt.show()
 
