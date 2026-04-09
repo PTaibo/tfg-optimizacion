@@ -88,7 +88,7 @@ void benchmark_rank(size_t size, int runs)
     polybench_start_instruments;
     for (int i = 0; i < runs; i++) {
         size_t idx = rand() % size;
-        bmap.select0(idx);
+        bmap.rank(idx);
     }
     polybench_stop_instruments;
     std::cout << "Rank (s): ";
@@ -103,8 +103,8 @@ int main (int argc, char *argv[])
     }
 
     polybench_prepare_instruments();
-    size_t bmap_size = 10000000;
-    int runs = 10000;
+    size_t bmap_size = 1000000000;
+    int runs = 100000;
     switch (atoi(argv[1])) {
         case 0:
             benchmark_select0(bmap_size, runs);
