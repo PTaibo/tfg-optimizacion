@@ -34,7 +34,8 @@ def parse_file(file_name):
 def make_plot(data, bits, plot):
     bits = str(bits)
 
-    x_label = ['3b', '300b', '600b', '1w', '2w', '10w', '30w']   
+    x_bits = 2 # Number of x values that are not word-aligned
+    x_label = ['300b', '600b', '1w', '2w', '3w', '4w', '5w', '6w', '7w', '8w', '9w', '10w', '11w', '12w', '13w', '14w', '15w', '16w', '17w', '18w', '19w', '20w', '21w', '22w', '23w', '24w', '25w', '26w', '27w', '28w', '29w', '30w', '31w', '32w', '33w', '34w', '35w', '100w', '200w']
     x_coord = [i+1 for i in range(len(x_label))]
     height = []
 
@@ -51,10 +52,10 @@ def make_plot(data, bits, plot):
     print(height)
 
     # plt.bar(x_coord, height, tick_label = x_label, width = 0.8, color = ['red', 'green'])
-    plot.bar(x_coord, height, color = ['blue', 'blue', 'blue', 'green', 'green', 'green', 'green'])
+    plot.bar(x_coord, height, color = ['blue'] * min(x_bits, len(x_label)) + ['green'] * max(0, len(x_label) - 2))
 
     plot.set_xticks(x_coord)
-    plot.set_xticklabels(x_label)
+    plot.set_xticklabels(x_label, rotation=90, ha='right')
     plot.set_xlabel('Bits per block')
     # plot.set_ylabel('Seconds')
     plot.yaxis.set_tick_params(labelleft=True)
@@ -70,11 +71,11 @@ if __name__ == "__main__":
         exit()
 
     data = parse_file(sys.argv[1])
-    _, axs = plt.subplots(1, 3, sharey=True)
+    _, axs = plt.subplots(1, 2, sharey=True)
     axs[0].set_ylabel('Seconds')
-    make_plot(data, 8, axs[0])
-    make_plot(data, 32, axs[1])
-    make_plot(data, 64, axs[2])
+    # make_plot(data, 8, axs[0])
+    make_plot(data, 32, axs[0])
+    make_plot(data, 64, axs[1])
 
     plt.suptitle(f'Benchmark: {sys.argv[1]}', fontsize=16, fontweight='bold')
     plt.show()
