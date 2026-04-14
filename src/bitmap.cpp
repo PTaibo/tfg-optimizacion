@@ -130,13 +130,15 @@ void BitMap::updateRank()
     _changedBitmap = false;
 }
 
+bool BitMap::rankNeedsUpdate()
+{
+    return _changedBitmap;
+}
+
 long BitMap::wrdRank(bitIdx_t idx)
 {
     if (idx >= _size)
         return -1;
-
-    if (_changedBitmap)
-        updateRank();
 
     bitIdx_t blkIdx = idx/_bitsPerBlk;
     bitIdx_t ans = _rankS[blkIdx];
@@ -159,9 +161,6 @@ long BitMap::rank(bitIdx_t idx)
 {
     if (idx >= _size)
         return -1;
-
-    if (_changedBitmap)
-        updateRank();
 
     size_t blkIdx = (idx+1)/_bitsPerBlk; // NOTE: idx+1 por si idx es el último elmento del bloque
     size_t ans = _rankS[blkIdx];
@@ -197,9 +196,6 @@ long BitMap::rank(bitIdx_t idx)
 
 long BitMap::select0(bitIdx_t n)
 {
-    if (_changedBitmap)
-        updateRank();
-
     if (n < 1 || _size - _rankS.back() < n) {
         return -1;
     }
@@ -244,9 +240,6 @@ long BitMap::select0(bitIdx_t n)
 
 long BitMap::select1(bitIdx_t n)
 {
-    if (_changedBitmap)
-        updateRank();
-
     if (n < 1 || _rankS.back() < n)
         return -1;
 

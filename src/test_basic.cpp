@@ -152,6 +152,7 @@ void test_rank()
 {
     std::string bits = "011010111010101011010100";
     BitMap bmap(bits);
+    bmap.updateRank();
     bool works = true;
     if (bmap.rank(2) != 2) works = false;
     if (bmap.rank(7) != 5) works = false;
@@ -167,6 +168,7 @@ void test_select0()
 {
     std::string bits = "011010111010101011010100";
     BitMap bmap(bits);
+    bmap.updateRank();
     bool works = true;
     if (bmap.select0(1) != 0) works = false;
     if (bmap.select0(6) != 13) works = false;
@@ -179,6 +181,7 @@ void test_select1()
 {
     std::string bits = "011010111010101011010100";
     BitMap bmap(bits);
+    bmap.updateRank();
     bool works = true;
     if (bmap.select1(3) != 4) works = false;
     if (bmap.select1(10) != 16) works = false;
@@ -191,6 +194,7 @@ void test_long_bitmap()
 {
     std::string bits = "01101011101010101101010001010110101010010101001010001010101001010100100000000000111111110101001001001011010101010010100101010100100100011101001010111010100000101010011101010101011100111010001011110101010010000010101";
     BitMap bmap(bits);
+    bmap.updateRank();
 
     bool works = true;
     if (bmap.rank(28) != 15) works = false;
@@ -258,6 +262,7 @@ void test_random_rank(size_t size, int tests)
             bmap.set(i);
         }
     }
+    bmap.updateRank();
 
     bool works = true;
     for (int i = 0; i < tests; i++) {
@@ -286,6 +291,7 @@ void test_random_wrd_rank(size_t size, int tests)
             bmap.set(i);
         }
     }
+    bmap.updateRank();
 
     bool works = true;
     for (int i = 0; i < tests; i++) {
@@ -315,6 +321,7 @@ void test_random_select0(size_t size, int tests)
             zeros.push_back(i);
         }
     }
+    bmap.updateRank();
 
     bool works = true;
     for (int i = 0; i < tests; i++) {
@@ -343,6 +350,7 @@ void test_random_select1(size_t size, int tests)
             bmap.set(i);
         }
     }
+    bmap.updateRank();
 
     bool works = true;
     for (int i = 0; i < tests; i++) {
