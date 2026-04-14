@@ -143,16 +143,14 @@ long BitMap::wrdRank(bitIdx_t idx)
     bitIdx_t blkIdx = idx/_bitsPerBlk;
     bitIdx_t ans = _rankS[blkIdx];
     size_t fstWrd = blkIdx*(_bitsPerBlk/word_s);
-    size_t lstWrd = (idx+1)/word_s;
+    size_t lstWrd = idx/word_s;
     
     for (size_t currWrd = fstWrd; currWrd < lstWrd; currWrd++) {
         ans += POPCOUNT(_bits[currWrd]);
     }
 
-    if ( lstWrd*word_s < idx+1 ) {
-        size_t bitInWrd = (idx+1) % word_s;
-        ans += POPCOUNT(_bits[lstWrd] >> (word_s - bitInWrd));
-    }
+    size_t bitPosInWrd = (idx+1) & (word_s - 1);
+    ans += POPCOUNT(_bits[lstWrd] >> (word_s - bitPosInWrd));
 
     return ans;
 }
