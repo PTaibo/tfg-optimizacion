@@ -18,7 +18,7 @@ class BitMap
 
         bitIdx_t _size = 0; //!< Size in bits of the bitmap
         std::vector<word_t> _bits; //!< Bit vector
-        bitIdx_t _bitsPerBlk = 0; //!< Number of bits per block of rankS
+        bitIdx_t _bitsPerBlk = 0; //!< Number of bits per block of rankS (HAS TO BE MULTIPLE OF WORD_S)
         std::vector<uint32_t> _rankS; //!< Rank helper structure
         bool _changedBitmap = false;
         std::vector<int32_t> _lazyRank; //!< Records bit changes

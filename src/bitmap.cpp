@@ -2,17 +2,17 @@
 
 #include <assert.h>
 
-#define RANKBLK (960) // Default rank block size
+#define RANKBLK (2) // Default number of words per rank block
 
 // CONSTRUCTORS AND DESTRUCTORS
-BitMap::BitMap(bitIdx_t size, bitIdx_t bitsPerRankBlk)
+BitMap::BitMap(bitIdx_t size, bitIdx_t wordsPerRankBlk)
 {
     _size = size;
     // Int ceiling division: (A + B - 1) / B
     _bits.resize((_size + word_s - 1) / word_s, 0); 
-    _bitsPerBlk = bitsPerRankBlk;
+    _bitsPerBlk = wordsPerRankBlk*word_s;
     if (!_bitsPerBlk) {
-        _bitsPerBlk = RANKBLK;
+        _bitsPerBlk = RANKBLK*word_s;
     }
     ulong ceiling_div = (_size + _bitsPerBlk - 1) / _bitsPerBlk;
     _rankS.resize(ceiling_div + 1, 0);
@@ -20,13 +20,13 @@ BitMap::BitMap(bitIdx_t size, bitIdx_t bitsPerRankBlk)
     _lazyRank.resize(ceiling_div + 1, 0);
 }
 
-BitMap::BitMap(std::string bits, bitIdx_t bitsPerRankBlk)
+BitMap::BitMap(std::string bits, bitIdx_t wordsPerRankBlk)
 {
     _size = bits.size();
     _bits.resize((bits.size() + word_s - 1) / word_s, 0);
-    _bitsPerBlk = bitsPerRankBlk;
+    _bitsPerBlk = wordsPerRankBlk*word_s;
     if (!_bitsPerBlk) {
-        _bitsPerBlk = RANKBLK;
+        _bitsPerBlk = RANKBLK*word_s;
     }
     ulong ceiling_div = (bits.size() + _bitsPerBlk - 1) / _bitsPerBlk;
     _rankS.resize(ceiling_div + 1, 0);
