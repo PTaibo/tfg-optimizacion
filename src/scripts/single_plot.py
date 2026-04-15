@@ -34,8 +34,9 @@ def parse_file(file_name):
 def make_plot(data, bits, plot):
     bits = str(bits)
 
-    x_bits = 2 # Number of x values that are not word-aligned
-    x_label = ['300b', '600b', '1w', '2w', '3w', '4w', '5w', '6w', '7w', '8w', '9w', '10w', '11w', '12w', '13w', '14w', '15w', '16w', '17w', '18w', '19w', '20w', '21w', '22w', '23w', '24w', '25w', '26w', '27w', '28w', '29w', '30w', '31w', '32w', '33w', '34w', '35w', '100w', '200w']
+    # x_bits = 2 # Number of x values that are not word-aligned
+    # x_label = ['300b', '600b', '1w', '2w', '3w', '4w', '5w', '6w', '7w', '8w', '9w', '10w', '11w', '12w', '13w', '14w', '15w', '16w', '17w', '18w', '19w', '20w', '21w', '22w', '23w', '24w', '25w', '26w', '27w', '28w', '29w', '30w', '31w', '32w', '33w', '34w', '35w', '100w', '200w']
+    x_label = ['1w', '2w', '3w', '4w', '5w', '6w', '7w', '8w', '9w', '10w', '11w', '12w', '13w', '14w', '15w', '16w', '17w', '18w', '19w', '20w', '21w', '22w', '23w', '24w', '25w', '26w', '27w', '28w', '29w', '30w', '31w', '32w', '33w', '34w', '35w', '100w', '200w']
     x_coord = [i+1 for i in range(len(x_label))]
     height = []
 
