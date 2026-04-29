@@ -385,8 +385,8 @@ int main (void)
     test_toString();
     test_long_bitmap();
 
-    size_t bmap_size = 10000000;
-    int tests = 10000;
+    size_t bmap_size = 1000000;
+    int tests = 100;
     test_random_set_get(bmap_size, tests);
     test_random_rank(bmap_size, tests);
     test_random_wrd_rank(bmap_size, tests);

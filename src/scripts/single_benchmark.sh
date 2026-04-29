@@ -8,7 +8,8 @@ CYAN='\033[0;36m'
 NC='\033[0m' # No colour
 
 wordBits=(32 64)
-wordMult=(1 2 3 4 5 10 15 20 25 30 35 100 200)
+# wordMult=(1 2 3 4 5 10 15 20 25 30 35 100 200)
+wordMult=(1 2 10 20 30 100)
 
 cp $GIT/bitmap.h $GIT/bitmap.h.bckp
 cp $GIT/bitmap.cpp $GIT/bitmap.cpp.bckp

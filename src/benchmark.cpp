@@ -134,18 +134,20 @@ int main (int argc, char *argv[])
     polybench_prepare_instruments();
     size_t bmap_size = 1000000000;
     int runs = 100000;
+    size_t bmap_size_small = 1000000000;
+    int runs_small = 1000;
     switch (atoi(argv[1])) {
         case 0:
-            benchmark_select0(bmap_size, runs);
+            benchmark_select0(bmap_size_small, runs_small);
             break;
         case 1:
-            benchmark_select1(bmap_size, runs);
+            benchmark_select1(bmap_size_small, runs_small);
             break;
         case 2:
             benchmark_rank(bmap_size, runs);
             break;
         case 3:
-            benchmark_select_compare(bmap_size, runs);
+            benchmark_select_compare(bmap_size_small, runs_small);
             break;
         case 4:
             benchmark_rank_compare(bmap_size, runs);

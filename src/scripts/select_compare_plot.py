@@ -39,7 +39,7 @@ def make_plot(data, bits, select, plot):
     bits = str(bits)
     select = str(select)
 
-    x_label = ['3b', '300b', '600b', '1w', '2w', '10w', '30w']   
+    x_label = ['1w', '2w', '10w', '20w', '30w', '100w']   
     x_coord = [i+1 for i in range(len(x_label))]
     height = []
 
@@ -56,7 +56,7 @@ def make_plot(data, bits, select, plot):
     print(height)
 
     # plt.bar(x_coord, height, tick_label = x_label, width = 0.8, color = ['red', 'green'])
-    plot.bar(x_coord, height, color = ['blue', 'blue', 'blue', 'green', 'green', 'green', 'green'])
+    plot.bar(x_coord, height)
 
     plot.set_xticks(x_coord)
     plot.set_xticklabels(x_label)
@@ -77,15 +77,13 @@ if __name__ == "__main__":
         exit()
 
     data = parse_file(sys.argv[1])
-    _, axs = plt.subplots(2, 3, sharey=True)
+    _, axs = plt.subplots(2, 2, sharey=True)
     axs[0,0].set_ylabel('Seconds')
     axs[1,0].set_ylabel('Seconds')
-    make_plot(data, 8, 0, axs[0, 0])
-    make_plot(data, 32, 0, axs[0, 1])
-    make_plot(data, 64, 0, axs[0, 2])
-    make_plot(data, 8, 1, axs[1, 0])
-    make_plot(data, 32, 1, axs[1, 1])
-    make_plot(data, 64, 1, axs[1, 2])
+    make_plot(data, 32, 0, axs[0, 0])
+    make_plot(data, 64, 0, axs[0, 1])
+    make_plot(data, 32, 1, axs[1, 0])
+    make_plot(data, 64, 1, axs[1, 1])
 
     plt.suptitle(f'Benchmark: {sys.argv[1]}', fontsize=16, fontweight='bold')
     plt.show()
