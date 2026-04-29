@@ -8,7 +8,16 @@ benchmarks=("select0"               # 0
             "select0_vs_select1"    # 3
             "rank_vs_wrdRank")      # 4
 
-for ((i = 0; i < ${#benchmarks[@]}; i++)); do
+to_run=(3)
+
+echo "Benchmarks to run:"
+for i in ${to_run[@]}; do
+    echo -e "\t- ${benchmarks[$i]}"
+done
+echo ""
+
+for i in ${to_run[@]}; do
+# for ((i = 0; i < ${#to_run[@]}; i++)); do
     echo "Running ${benchmarks[$i]}"
     bash $GIT/src/scripts/single_benchmark.sh $i | tee $GIT/benchmarks/${benchmarks[$i]}.txt
 done
