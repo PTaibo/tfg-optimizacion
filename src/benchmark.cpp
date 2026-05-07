@@ -14,6 +14,7 @@ void benchmark_select0(size_t size, int runs)
             bmap.set(i);
         }
     }
+    bmap.updateRank();
 
     polybench_start_instruments;
     for (int i = 0; i < runs; i++) {
@@ -34,6 +35,7 @@ void benchmark_select1(size_t size, int runs)
             bmap.set(i);
         }
     }
+    bmap.updateRank();
 
     polybench_start_instruments;
     for (int i = 0; i < runs; i++) {
@@ -54,6 +56,7 @@ void benchmark_select_compare(size_t size, int runs)
             bmap.set(i);
         }
     }
+    bmap.updateRank();
 
     std::vector<size_t> idx(runs);
     polybench_start_instruments;
@@ -83,6 +86,7 @@ void benchmark_rank(size_t size, int runs)
             bmap.set(i);
         }
     }
+    bmap.updateRank();
 
     // std::vector<size_t> idx(runs);
     polybench_start_instruments;
@@ -104,6 +108,7 @@ void benchmark_rank_compare(size_t size, int runs)
             bmap.set(i);
         }
     }
+    bmap.updateRank();
 
     std::vector<size_t> idx(runs);
     polybench_start_instruments;
@@ -138,10 +143,10 @@ int main (int argc, char *argv[])
     int runs_small = 1000;
     switch (atoi(argv[1])) {
         case 0:
-            benchmark_select0(bmap_size_small, runs_small);
+            benchmark_select0(bmap_size, runs);
             break;
         case 1:
-            benchmark_select1(bmap_size_small, runs_small);
+            benchmark_select1(bmap_size, runs);
             break;
         case 2:
             benchmark_rank(bmap_size, runs);
