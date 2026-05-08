@@ -36,7 +36,6 @@ void test_constructor_zeros()
         }
     }
     test("Zero constructor", size && all0);
-    std::cout << "  " << zeros.toString() << " <- bitmap\n";
     test("  Size()", size);
     test("  Initialized correctly", all0);
     std::cout << "-----------------------------------\n";
@@ -57,7 +56,6 @@ void test_constructor_str()
 
     test("String constructor", size && sameBits);
     std::cout << "  " << bits << " <- string" << "\n";
-    std::cout << "  " << vBits.toString() << " <- bitmap\n";
     test("  Size()", size);
     test("  Initialized correctly", sameBits);
     std::cout << "-----------------------------------\n";
@@ -77,8 +75,6 @@ void test_constructor_copy()
     }
 
     test("Copy constructor", size && sameBits);
-    std::cout << "  " << original.toString() << " <- original\n";
-    std::cout << "  " << copy.toString() << " <- copy\n";
     test("  Size()", size);
     test("  Initialized correctly", sameBits);
     std::cout << "------------------------" << "\n";
@@ -88,7 +84,6 @@ void test_get()
 {
     std::string bits = "01001101001101011000";
     BitMap bitmap(bits);
-    std::cout << bitmap.toString() << " <- bitmap\n";
 
     bool passed = true;
     for(size_t i = 0; i < bitmap.size(); i++) {
@@ -137,15 +132,6 @@ void test_toggle()
     test("Toggle()", bitmap.get(0) == 1);
     test("Toggle() out of bounds", bitmap.toggle(100) == -1);
     std::cout << "------------------------" << "\n";
-}
-
-void test_toString()
-{
-    std::string original = "01001101001101011000";
-    BitMap bitmap(original);
-    std::string result = bitmap.toString();
-    test("toString()", original == result);
-    std::cout << "-----------------------------------\n";
 }
 
 void test_rank()
@@ -308,7 +294,6 @@ int main (void)
     test_rank();
     test_select1();
 
-    test_toString();
     test_long_bitmap();
 
     size_t bmap_size = 1000000;
