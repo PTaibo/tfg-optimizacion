@@ -68,13 +68,6 @@ class BitMap
         // @param idx Position between 0 and size()-1
         // @return Number of ones up to that idx (included)
         long rank(bitIdx_t idx);
-        // @brief Only works if _bitsPerBlk is divisible by word_s
-        // @param idx Position between 0 and size()-1
-        // @return Number of ones up to that idx (included)
-        long wrdRank(bitIdx_t idx);
-        // @brief Get position of the nth 0
-        // @return Position of the bit or -1 if not found
-        long select0(bitIdx_t n);
         // @brief Get position of the nth 1
         // @return Position of the bit or -1 if not found
         long select1(bitIdx_t n);
@@ -82,6 +75,4 @@ class BitMap
         // BASIC VECTOR OPERATIONS
         // @return The size of the bitmap in bits
         bitIdx_t size();
-        // @return Bitmap as string of 0s and 1s
-        std::string toString();
 };

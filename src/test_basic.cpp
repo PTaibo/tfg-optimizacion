@@ -164,19 +164,6 @@ void test_rank()
     std::cout << "-----------------------------------\n";
 }
 
-void test_select0()
-{
-    std::string bits = "011010111010101011010100";
-    BitMap bmap(bits);
-    bmap.updateRank();
-    bool works = true;
-    if (bmap.select0(1) != 0) works = false;
-    if (bmap.select0(6) != 13) works = false;
-    if (bmap.select0(4) != 9) works = false;
-    test("select0()", works);
-    std::cout << "-----------------------------------\n";
-}
-
 void test_select1()
 {
     std::string bits = "011010111010101011010100";
@@ -275,66 +262,6 @@ void test_random_rank(size_t size, int tests)
     std::cout << "-----------------------------------\n";
 }
 
-void test_random_wrd_rank(size_t size, int tests)
-{
-    srand(time(0));
-    BitMap bmap(size, 512);
-    std::vector<long> ones (size);
-    if (rand() % 2) {
-        ones[0] = 1;
-        bmap.set(0);
-    }
-    for (size_t i = 1; i < size; i++) {
-        ones[i] = ones[i-1];
-        if (rand() % 2) {
-            ones[i]++;
-            bmap.set(i);
-        }
-    }
-    bmap.updateRank();
-
-    bool works = true;
-    for (int i = 0; i < tests; i++) {
-        size_t idx = rand() % size;
-        if (bmap.wrdRank(idx) != ones[idx]) {
-            works = false;
-        }
-    }
-    test("Random wrd_rank()", works);
-    std::cout << "-----------------------------------\n";
-}
-
-void test_random_select0(size_t size, int tests)
-{
-    srand(time(0));
-    BitMap bmap(size);
-    std::vector<long> zeros(1, -1);
-    if (rand() % 2) {
-        bmap.set(0);
-    } else {
-        zeros.push_back(0);
-    }
-    for (size_t i = 1; i < size; i++) {
-        if (rand() % 2) {
-            bmap.set(i);
-        } else {
-            zeros.push_back(i);
-        }
-    }
-    bmap.updateRank();
-
-    bool works = true;
-    for (int i = 0; i < tests; i++) {
-        size_t idx = rand() % size;
-        size_t idx_1s = (idx >= zeros.size()) ? 0 : idx;
-        if (bmap.select0(idx) != zeros[idx_1s]) {
-            works = false;
-        }
-    }
-    test("Random select0()", works);
-    std::cout << "-----------------------------------\n";
-}
-
 void test_random_select1(size_t size, int tests)
 {
     srand(time(0));
@@ -379,7 +306,6 @@ int main (void)
     test_toggle();
 
     test_rank();
-    test_select0();
     test_select1();
 
     test_toString();
@@ -389,8 +315,6 @@ int main (void)
     int tests = 100;
     test_random_set_get(bmap_size, tests);
     test_random_rank(bmap_size, tests);
-    test_random_wrd_rank(bmap_size, tests);
-    test_random_select0(bmap_size, tests);
     test_random_select1(bmap_size, tests);
 
     if (!failed) {

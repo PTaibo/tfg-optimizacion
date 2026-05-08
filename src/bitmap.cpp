@@ -135,7 +135,7 @@ bool BitMap::rankNeedsUpdate()
     return _changedBitmap;
 }
 
-long BitMap::wrdRank(bitIdx_t idx)
+long BitMap::rank(bitIdx_t idx)
 {
     if (idx >= _size)
         return -1;
@@ -153,80 +153,6 @@ long BitMap::wrdRank(bitIdx_t idx)
     ans += POPCOUNT(_bits[lstWrd] >> (word_s - bitPosInWrd));
 
     return ans;
-}
-
-long BitMap::rank(bitIdx_t idx)
-{
-    if (idx >= _size)
-        return -1;
-
-    size_t blkIdx = (idx+1)/_bitsPerBlk; // NOTE: idx+1 por si idx es el último elmento del bloque
-    size_t ans = _rankS[blkIdx];
-    bitIdx_t currBit = _bitsPerBlk*blkIdx;
-    if (currBit == (idx+1))
-        return ans;
-
-    size_t wrd = (currBit + word_s - 1) / word_s; // NOTE: Integer ceiling division
-    if (wrd*word_s > idx) {
-        word_t mask = (~0);
-        mask >>= (currBit%word_s);
-        mask &= (word_t)(~0) << ( word_s - ((idx+1) % word_s) );
-        ans += POPCOUNT(_bits[wrd-1] & mask);
-
-        return ans;
-    }
-
-    if (currBit % word_s)
-        ans += POPCOUNT(_bits[wrd-1] << (currBit%word_s));
-
-    size_t lstWrd = (idx+1)/word_s;
-    for (; wrd < lstWrd; wrd++)
-        ans += POPCOUNT(_bits[wrd]);
-
-    currBit = wrd*word_s;
-    if ( wrd*word_s < idx+1 ) {
-        size_t shift = word_s - ((idx+1) % word_s);
-        ans += POPCOUNT(_bits[wrd] >> shift);
-    }
-
-    return ans;
-}
-
-long BitMap::select0(bitIdx_t n)
-{
-    if (n < 1 || _size - _rankS.back() < n)
-        return -1;
-
-    // Binary search in rank structure
-    int l = -1;
-    int r = _rankS.size();
-    while (r > l+1) {
-        int m = (l+r)/2;
-        if ((m*_bitsPerBlk) - _rankS[m] < n) {
-            l = m;
-        }
-        else {
-            r = m;
-        }
-    }
-    bitIdx_t currBit = _bitsPerBlk*l;
-    bitIdx_t cnt = currBit - _rankS[l];
-    if (cnt == n)
-        return currBit-1;
-    
-    size_t wrd = (currBit + word_s - 1) / word_s;
-    for (; cnt < n; wrd++) {
-        cnt += word_s - POPCOUNT(_bits[wrd]);
-    }
-    cnt -= word_s - POPCOUNT(_bits[--wrd]);
-
-    for (currBit = wrd*word_s; cnt < n; currBit++) {
-        if (get(currBit) == 0) {
-            cnt++;
-        }
-    }    
-
-    return currBit-1;
 }
 
 long BitMap::select1(bitIdx_t n)
@@ -270,14 +196,5 @@ long BitMap::select1(bitIdx_t n)
 bitIdx_t BitMap::size()
 {
     return _size;
-}
-
-std::string BitMap::toString()
-{
-    std::string bitmap (_size, '0');
-    for (bitIdx_t i = 0; i < _size; i++) {
-        bitmap[i] = get(i) + '0';
-    }
-    return bitmap;
 }
 

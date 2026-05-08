@@ -2,13 +2,10 @@
 
 GIT='/home/p.taibo/cuda/bitmaps'
 
-benchmarks=("select0"               # 0
-            "select1"               # 1
-            "rank"                  # 2
-            "select0_vs_select1"    # 3
-            "rank_vs_wrdRank")      # 4
+benchmarks=("select1"               # 0
+            "rank")                 # 1
 
-to_run=(3)
+to_run=(1)
 
 echo "Benchmarks to run:"
 for i in ${to_run[@]}; do
