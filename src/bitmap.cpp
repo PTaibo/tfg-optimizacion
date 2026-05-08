@@ -8,30 +8,34 @@
 BitMap::BitMap(bitIdx_t size, bitIdx_t wordsPerRankBlk)
 {
     _size = size;
-    // Int ceiling division: (A + B - 1) / B
-    _bits.resize((_size + word_s - 1) / word_s, 0); 
-    _bitsPerBlk = wordsPerRankBlk*word_s;
-    if (!_bitsPerBlk) {
+    if (!wordsPerRankBlk) {
         _bitsPerBlk = RANKBLK*word_s;
     }
-    ulong ceiling_div = (_size + _bitsPerBlk - 1) / _bitsPerBlk;
-    _rankS.resize(ceiling_div + 1, 0);
+    else {
+        _bitsPerBlk = wordsPerRankBlk*word_s;
+    }
+    ulong rankBlkNum = (_size + _bitsPerBlk - 1) / _bitsPerBlk;
     _changedBitmap = false;
-    _lazyRank.resize(ceiling_div + 1, 0);
+
+    // Int ceiling division: (A + B - 1) / B
+    _bits.resize((_size + word_s - 1) / word_s, 0); 
+    _rankS.resize(rankBlkNum + 1, 0);
+    _lazyRank.resize(rankBlkNum + 1, 0);
 }
 
 BitMap::BitMap(std::string bits, bitIdx_t wordsPerRankBlk)
 {
     _size = bits.size();
-    _bits.resize((bits.size() + word_s - 1) / word_s, 0);
-    _bitsPerBlk = wordsPerRankBlk*word_s;
-    if (!_bitsPerBlk) {
+    if (!wordsPerRankBlk)
         _bitsPerBlk = RANKBLK*word_s;
-    }
-    ulong ceiling_div = (bits.size() + _bitsPerBlk - 1) / _bitsPerBlk;
-    _rankS.resize(ceiling_div + 1, 0);
+    else
+        _bitsPerBlk = wordsPerRankBlk*word_s;
+    ulong rankBlkNum = (bits.size() + _bitsPerBlk - 1) / _bitsPerBlk;
     _changedBitmap = false;
-    _lazyRank.resize(ceiling_div + 1, 0);
+
+    _bits.resize((bits.size() + word_s - 1) / word_s, 0);
+    _rankS.resize(rankBlkNum + 1, 0);
+    _lazyRank.resize(rankBlkNum + 1, 0);
 
     for(bitIdx_t i = 0; i < bits.size(); i++) {
         if (bits[i] == '1') {
@@ -43,10 +47,11 @@ BitMap::BitMap(std::string bits, bitIdx_t wordsPerRankBlk)
 BitMap::BitMap(const BitMap& bitmap)
 {
     _size = bitmap._size;
-    _bits.assign(bitmap._bits.begin(), bitmap._bits.end());
     _bitsPerBlk = bitmap._bitsPerBlk;
-    _rankS.assign(bitmap._rankS.begin(), bitmap._rankS.end());
     _changedBitmap = bitmap._changedBitmap;
+
+    _bits.assign(bitmap._bits.begin(), bitmap._bits.end());
+    _rankS.assign(bitmap._rankS.begin(), bitmap._rankS.end());
     _lazyRank.assign(bitmap._lazyRank.begin(), bitmap._lazyRank.end());
 }
 
