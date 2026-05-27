@@ -16,6 +16,6 @@ echo ""
 for i in ${to_run[@]}; do
 # for ((i = 0; i < ${#to_run[@]}; i++)); do
     echo "Running ${benchmarks[$i]}"
-    bash $GIT/src/scripts/single_benchmark.sh $i | tee $GIT/benchmarks/${benchmarks[$i]}.txt
+    bash $GIT/src/scripts/single_benchmark.sh $i | tee $GIT/benchmarks/${benchmarks[$i]}_simd.txt
 done
 
