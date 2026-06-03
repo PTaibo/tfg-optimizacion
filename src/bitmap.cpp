@@ -1,8 +1,9 @@
 #include "bitmap.h"
 
 #include <assert.h>
+#include <immintrin.h>
 
-#define RANKBLK (2) // Default number of words per rank block
+#define RANKBLK (20) // Default number of words per rank block
 
 // CONSTRUCTORS AND DESTRUCTORS
 BitMap::BitMap(bitIdx_t size, bitIdx_t wordsPerRankBlk)
@@ -149,11 +150,27 @@ long BitMap::rank(bitIdx_t idx)
     bitIdx_t ans = _rankS[blkIdx];
     size_t fstWrd = blkIdx*(_bitsPerBlk/word_s);
     size_t lstWrd = idx/word_s;
+    size_t currWrd = fstWrd;
     
-    for (size_t currWrd = fstWrd; currWrd < lstWrd; currWrd++) {
-        ans += POPCOUNT(_bits[currWrd]);
+    __m256i v_bits, v_pcount;
+    __m256i v_sum = _mm256_setzero_si256();
+    for (; currWrd+7 < lstWrd; currWrd += 8) {
+        v_bits = _mm256_set_epi32(_bits[currWrd+7], _bits[currWrd+6],
+                                  _bits[currWrd+5], _bits[currWrd+4],
+                                  _bits[currWrd+3], _bits[currWrd+2],
+                                  _bits[currWrd+1], _bits[currWrd]);
+        v_pcount = _mm256_popcnt_epi32(v_bits);
+        v_sum = _mm256_add_epi32(v_sum, v_pcount);
+    }
+    alignas(32) uint32_t sum[8];
+    _mm256_store_si256((__m256i*)sum, v_sum);
+    for (size_t i = 0; i < 8; i++) {
+        ans += sum[i];
     }
 
+    for (; currWrd < lstWrd; currWrd++) {
+        ans += POPCOUNT(_bits[currWrd]);
+    }
     size_t bitPosInWrd = (idx+1) & (word_s - 1);
     ans += POPCOUNT(_bits[lstWrd] >> (word_s - bitPosInWrd));
 
