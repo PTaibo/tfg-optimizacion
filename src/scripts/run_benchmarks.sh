@@ -1,7 +1,5 @@
 #!/bin/bash
 
-GIT='/home/p.taibo/cuda/bitmaps'
-
 benchmarks=("select0"               # 0
             "select1"               # 1
             "rank"                  # 2
@@ -19,6 +17,6 @@ echo ""
 for i in ${to_run[@]}; do
 # for ((i = 0; i < ${#to_run[@]}; i++)); do
     echo "Running ${benchmarks[$i]}"
-    bash $GIT/src/scripts/single_benchmark.sh $i | tee $GIT/benchmarks/${benchmarks[$i]}.txt
+    bash $BITMAP_PATH/src/scripts/single_benchmark.sh $i | tee $BITMAP_PATH/benchmarks/${benchmarks[$i]}.txt
 done
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-GIT='/home/p.taibo/cuda/bitmaps/src'
+CODE="$BITMAP_PATH/src"
 
 PURPLE='\033[0;35m'
 BLUE='\033[0;34m'
@@ -11,34 +11,34 @@ wordBits=(32 64)
 # wordMult=(1 2 3 4 5 10 15 20 25 30 35 100 200)
 wordMult=(1 2 10 20 30 100)
 
-cp $GIT/bitmap.h $GIT/bitmap.h.bckp
-cp $GIT/bitmap.cpp $GIT/bitmap.cpp.bckp
+cp $CODE/bitmap.h $CODE/bitmap.h.bckp
+cp $CODE/bitmap.cpp $CODE/bitmap.cpp.bckp
 
 for bits in "${wordBits[@]}"; do
     echo "$bits bit word"
-    sed -i "/using word_t = / s/uint[0-9]\+_t/uint${bits}_t/" $GIT/bitmap.h > /dev/null
+    sed -i "/using word_t = / s/uint[0-9]\+_t/uint${bits}_t/" $CODE/bitmap.h > /dev/null
 
     for blk in "${bitsPerBlk[@]}"; do
         echo "$blk bits per rank block"
-        sed -i "/#define RANKBLK / s/[0-9]\+/${blk}/" $GIT/bitmap.cpp
+        sed -i "/#define RANKBLK / s/[0-9]\+/${blk}/" $CODE/bitmap.cpp
 
-        make -f $GIT/Makefile cleanall > /dev/null
-        make -f $GIT/Makefile cbench &> /dev/null
-        $GIT/benchmark.elf $1
+        make -f $CODE/Makefile cleanall > /dev/null
+        make -f $CODE/Makefile cbench &> /dev/null
+        $CODE/benchmark.elf $1
     done
 
     for words in "${wordMult[@]}"; do
         echo "$words word per rank block"
-        sed -i "/#define RANKBLK / s/[0-9]\+/${words}/" $GIT/bitmap.cpp
+        sed -i "/#define RANKBLK / s/[0-9]\+/${words}/" $CODE/bitmap.cpp
 
-        make -f $GIT/Makefile cleanall > /dev/null
-        make -f $GIT/Makefile cbench &> /dev/null
-        $GIT/benchmark.elf $1
+        make -f $CODE/Makefile cleanall > /dev/null
+        make -f $CODE/Makefile cbench &> /dev/null
+        $CODE/benchmark.elf $1
     done
 
     echo "-------------------"
 done
 
-mv $GIT/bitmap.h.bckp $GIT/bitmap.h
-mv $GIT/bitmap.cpp.bckp $GIT/bitmap.cpp
+mv $CODE/bitmap.h.bckp $CODE/bitmap.h
+mv $CODE/bitmap.cpp.bckp $CODE/bitmap.cpp
 
