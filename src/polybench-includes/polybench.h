@@ -29,6 +29,8 @@
 
 # include <stdlib.h>
 
+#define POLYBENCH_PAPI
+
 /* Array padding. By default, none is used. */
 # ifndef POLYBENCH_PADDING_FACTOR
 /* default: */
