@@ -1,25 +1,27 @@
+CC=gcc
 GPP=g++
 
-CSRC=$(wildcard includes/*.c)
-CPPSRC=bitmap.cpp $(wildcard includes/*.cpp)
+# CSRC=$(wildcard polybench-includes/*.c)
+CPPSRC=bitmap.cpp
 OBJ=$(CSRC:.c=.o) $(CPPSRC:.cpp=.o)
 
 BUILD=release
-cppflags.release=-O2 -march=native -D POLYBENCH_TIME
+# cppflags.release=-O2 -march=native -D POLYBENCH_PAPI
+cppflags.release=-O2 -march=native
 cppflags.debug=-g3 -O0 -Wextra
-CPPFLAGS=$(cppflags.$(BUILD)) -Wall
-LDLIBS=-I./includes
-
-BENCH=0
+CPPFLAGS=$(cppflags.$(BUILD))
+# LDLIBS=-I./polybench-includes -I${PAPI_DIR}/include
+LDLIBS=-I${PAPI_DIR}/include
+LDFLAGS=-L${PAPI_DIR}/lib -lpapi
 
 %.o: %.c
-	$(GPP) ${CPPFLAGS} ${LDLIBS} -c $^ -o $@
+	$(CC) ${CPPFLAGS} ${LDLIBS} -c $^ -o $@
 
 %.o: %.cpp
 	$(GPP) ${CPPFLAGS} ${LDLIBS} -c $^ -o $@
 
 cbench: benchmark.o ${OBJ}
-	$(GPP) ${CPPFLAGS} $^ -o benchmark.elf
+	$(GPP) ${CPPFLAGS} ${LDFLAGS} $^ -o benchmark.elf
 
 bench:
 	bash ./scripts/run_benchmarks.sh

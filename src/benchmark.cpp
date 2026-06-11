@@ -3,7 +3,15 @@
 #include <iostream>
 
 #include "utils.h"
-#include "polybench.h"
+#include <papi.h>
+
+void papi_handle_error(int retval)
+{
+    if (retval != PAPI_OK) {
+        printf("PAPI error %d: %s\n", retval, PAPI_strerror(retval));
+        exit(1);
+    }
+}
 
 void benchmark_select0(size_t size, int runs)
 {
@@ -16,14 +24,11 @@ void benchmark_select0(size_t size, int runs)
     }
     bmap.updateRank();
 
-    polybench_start_instruments;
     for (int i = 0; i < runs; i++) {
         size_t idx = rand() % size;
         bmap.select0(idx);
     }
-    polybench_stop_instruments;
     std::cout << "Select0 (s): ";
-    polybench_print_instruments;
 }
 
 void benchmark_select1(size_t size, int runs)
@@ -37,14 +42,11 @@ void benchmark_select1(size_t size, int runs)
     }
     bmap.updateRank();
 
-    polybench_start_instruments;
     for (int i = 0; i < runs; i++) {
         size_t idx = rand() % size;
         bmap.select1(idx);
     }
-    polybench_stop_instruments;
     std::cout << "Select1 (s): ";
-    polybench_print_instruments;
 }
 
 void benchmark_select_compare(size_t size, int runs)
@@ -59,22 +61,16 @@ void benchmark_select_compare(size_t size, int runs)
     bmap.updateRank();
 
     std::vector<size_t> idx(runs);
-    polybench_start_instruments;
     for (int i = 0; i < runs; i++) {
         idx[i] = rand() % size;
         bmap.select0(idx[i]);
     }
-    polybench_stop_instruments;
     std::cout << "Select0 (s): ";
-    polybench_print_instruments;
 
-    polybench_start_instruments;
     for (int i = 0; i < runs; i++) {
         bmap.select1(idx[i]);
     }
-    polybench_stop_instruments;
     std::cout << "Select1 (s): ";
-    polybench_print_instruments;
 }
 
 void benchmark_rank(size_t size, int runs)
@@ -89,14 +85,29 @@ void benchmark_rank(size_t size, int runs)
     bmap.updateRank();
 
     // std::vector<size_t> idx(runs);
-    polybench_start_instruments;
+    int event_set = PAPI_NULL;
+    long long values[1];
+    int retval = PAPI_create_eventset(&event_set);
+    papi_handle_error(retval);
+
+    const char *event_name = "UNHALTED_CORE_CYCLES";
+    retval = PAPI_add_named_event(event_set, event_name);
+    papi_handle_error(retval);
+    
+    retval = PAPI_start(event_set);
+    papi_handle_error(retval);
     for (int i = 0; i < runs; i++) {
         size_t idx = rand() % size;
         bmap.rank(idx);
     }
-    polybench_stop_instruments;
-    std::cout << "Rank (s): ";
-    polybench_print_instruments;
+    retval = PAPI_read(event_set, &values[0]);
+    papi_handle_error(retval);
+    
+    // std::cout << "Rank (s): ";
+    printf("Unhalted clock cycles: %lld\n", values[0]);
+
+    retval = PAPI_stop(event_set, NULL);
+    papi_handle_error(retval);
 }
 
 void benchmark_rank_compare(size_t size, int runs)
@@ -111,22 +122,16 @@ void benchmark_rank_compare(size_t size, int runs)
     bmap.updateRank();
 
     std::vector<size_t> idx(runs);
-    polybench_start_instruments;
     for (int i = 0; i < runs; i++) {
         idx[i] = rand() % size;
         bmap.rank(idx[i]);
     }
-    polybench_stop_instruments;
     std::cout << "Rank (s): ";
-    polybench_print_instruments;
 
-    polybench_start_instruments;
     for (int i = 0; i < runs; i++) {
         bmap.wrdRank(idx[i]);
     }
-    polybench_stop_instruments;
     std::cout << "wrdRank (s): ";
-    polybench_print_instruments;
 }
 
 int main (int argc, char *argv[])
@@ -136,7 +141,11 @@ int main (int argc, char *argv[])
         return 1;
     }
 
-    polybench_prepare_instruments();
+    // Init PAPI
+    int retval = PAPI_library_init(PAPI_VER_CURRENT);
+    if (retval < 0 || retval != PAPI_VER_CURRENT)
+        papi_handle_error(retval);
+
     size_t bmap_size = 1000000000;
     int runs = 100000;
     size_t bmap_size_small = 1000000000;
