@@ -5,7 +5,7 @@ CPPSRC=bitmap.cpp $(wildcard includes/*.cpp)
 OBJ=$(CSRC:.c=.o) $(CPPSRC:.cpp=.o)
 
 BUILD=release
-cppflags.release=-O2 -march=native -D POLYBENCH_TIME
+cppflags.release=-O2 -march=native
 cppflags.debug=-g3 -O0 -Wextra
 CPPFLAGS=$(cppflags.$(BUILD)) -Wall
 LDLIBS=-I./includes
@@ -19,7 +19,7 @@ BENCH=0
 	$(GPP) ${CPPFLAGS} ${LDLIBS} -c $^ -o $@
 
 cbench: benchmark.o ${OBJ}
-	$(GPP) ${CPPFLAGS} $^ -o benchmark.elf
+	$(GPP) ${CPPFLAGS} -D POLYBENCH_TIME $^ -o benchmark.elf
 
 bench:
 	bash ./scripts/run_benchmarks.sh
