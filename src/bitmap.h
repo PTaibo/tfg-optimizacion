@@ -28,6 +28,9 @@ class BitMap
         // @param idx Bit position between 0 and _size-1
         // @return Word mask for the bit in that position
         word_t getMask(bitIdx_t idx);
+        // @brief Find the block in which the nth 1 is located
+        // @return Rank block index
+        int search(bitIdx_t n);
 
     public:
         // @brief Checks if there are pending changes for rankS

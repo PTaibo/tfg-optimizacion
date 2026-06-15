@@ -177,25 +177,39 @@ long BitMap::rank(bitIdx_t idx)
     return ans;
 }
 
-long BitMap::select1(bitIdx_t n)
+int BitMap::search(bitIdx_t n)
 {
-    if (n < 1 || _rankS.back() < n)
-        return -1;
-
-    // Binary search in rank structure
     int l = -1;
-    int r = _rankS.size();
+    int r = (_rankS.size()/8) + 1;
     while (r > l+1) {
         int m = (l+r)/2;
-        if (_rankS[m] < n) {
+        if (_rankS[m*8] < n) {
             l = m;
         }
         else {
             r = m;
         }
     }
-    bitIdx_t cnt = _rankS[l];
-    bitIdx_t currBit = _bitsPerBlk*l;
+
+    l *= 8;
+    size_t i = 0;
+    for (; i < 8; i++) {
+        if (_rankS[l+i] >= n) {
+            return l+i-1;
+        }
+    }
+
+    return l+7;
+}
+
+long BitMap::select1(bitIdx_t n)
+{
+    if (n < 1 || _rankS.back() < n)
+        return -1;
+
+    int blkIdx = search(n);
+    bitIdx_t cnt = _rankS[blkIdx];
+    bitIdx_t currBit = _bitsPerBlk*blkIdx;
     if (cnt == n)
         return currBit-1;
 
