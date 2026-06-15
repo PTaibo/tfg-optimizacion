@@ -297,7 +297,7 @@ int main (void)
     test_long_bitmap();
 
     size_t bmap_size = 1000000;
-    int tests = 100;
+    int tests = 1000000;
     test_random_set_get(bmap_size, tests);
     test_random_rank(bmap_size, tests);
     test_random_select1(bmap_size, tests);
