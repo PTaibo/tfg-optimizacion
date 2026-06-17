@@ -192,14 +192,17 @@ int BitMap::search(bitIdx_t n)
     }
 
     l *= 8;
-    size_t i = 0;
-    for (; i < 8; i++) {
-        if (_rankS[l+i] >= n) {
-            return l+i-1;
-        }
-    }
+    __m256i v_blks = _mm256_set_epi32(_rankS[l+7], _rankS[l+6],
+                                      _rankS[l+5], _rankS[l+4],
+                                      _rankS[l+3], _rankS[l+2],
+                                      _rankS[l+1], _rankS[l]);
+    __m256i v_n = _mm256_set1_epi32(n); // Bcast value n
+    __mmask8 mask = _mm256_cmplt_epu32_mask(v_blks, v_n); // lt
+    int pos = __builtin_clz(mask) - 24; // Remove 32b int added 0s
+    if (pos)
+        pos = 7-pos;
 
-    return l+7;
+    return l+pos;
 }
 
 long BitMap::select1(bitIdx_t n)
