@@ -59,25 +59,14 @@ class BitMap
         // @param idx Position between 0 and size()-1
         // @return 0 if out of bounds (error)
         int8_t clear(bitIdx_t idx);
-        // @brief Toggles bit. Necessary to update rankS
-        // @param idx Position between 0 and size()-1
-        // @return New value of bit or -1 if out of bounds
-        int8_t toggle(bitIdx_t idx);
 
         // BITMAP OPERATIONS
         // @param idx Position between 0 and size()-1
         // @return Number of ones up to that idx (included)
         long rank(bitIdx_t idx);
-        // @brief Only works if _bitsPerBlk is divisible by word_s
-        // @param idx Position between 0 and size()-1
-        // @return Number of ones up to that idx (included)
-        long wrdRank(bitIdx_t idx);
-        // @brief Get position of the nth 0
-        // @return Position of the bit or -1 if not found
-        long select0(bitIdx_t n);
         // @brief Get position of the nth 1
         // @return Position of the bit or -1 if not found
-        long select1(bitIdx_t n);
+        long select(bitIdx_t n);
 
         // BASIC VECTOR OPERATIONS
         // @return The size of the bitmap in bits

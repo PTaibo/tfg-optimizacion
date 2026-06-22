@@ -164,28 +164,15 @@ void test_rank()
     std::cout << "-----------------------------------\n";
 }
 
-void test_select0()
+void test_select()
 {
     std::string bits = "011010111010101011010100";
     BitMap bmap(bits);
     bmap.updateRank();
     bool works = true;
-    if (bmap.select0(1) != 0) works = false;
-    if (bmap.select0(6) != 13) works = false;
-    if (bmap.select0(4) != 9) works = false;
-    test("select0()", works);
-    std::cout << "-----------------------------------\n";
-}
-
-void test_select1()
-{
-    std::string bits = "011010111010101011010100";
-    BitMap bmap(bits);
-    bmap.updateRank();
-    bool works = true;
-    if (bmap.select1(3) != 4) works = false;
-    if (bmap.select1(10) != 16) works = false;
-    if (bmap.select1(2) != 2) works = false;
+    if (bmap.select(3) != 4) works = false;
+    if (bmap.select(10) != 16) works = false;
+    if (bmap.select(2) != 2) works = false;
     test("select1()", works);
     std::cout << "-----------------------------------\n";
 }
@@ -208,14 +195,14 @@ void test_long_bitmap()
     test("Long bitmap rank()", works);
 
     works = true;
-    if (bmap.select1(14) != 25) works = false;
-    if (bmap.select1(41) != 87) works = false;
-    if (bmap.select1(59) != 128) works = false;
-    if (bmap.select1(77) != 167) works = false;
-    if (bmap.select1(1) != 1) works = false;
-    if (bmap.select1(101) != -1) works = false;
-    if (bmap.select1(96) != 201) works = false;
-    if (bmap.select1(100) != 214) works = false;
+    if (bmap.select(14) != 25) works = false;
+    if (bmap.select(41) != 87) works = false;
+    if (bmap.select(59) != 128) works = false;
+    if (bmap.select(77) != 167) works = false;
+    if (bmap.select(1) != 1) works = false;
+    if (bmap.select(101) != -1) works = false;
+    if (bmap.select(96) != 201) works = false;
+    if (bmap.select(100) != 214) works = false;
     test("Long bitmap select1()", works);
     std::cout << "-----------------------------------\n";
 }
@@ -275,67 +262,7 @@ void test_random_rank(size_t size, int tests)
     std::cout << "-----------------------------------\n";
 }
 
-void test_random_wrd_rank(size_t size, int tests)
-{
-    srand(time(0));
-    BitMap bmap(size, 512);
-    std::vector<long> ones (size);
-    if (rand() % 2) {
-        ones[0] = 1;
-        bmap.set(0);
-    }
-    for (size_t i = 1; i < size; i++) {
-        ones[i] = ones[i-1];
-        if (rand() % 2) {
-            ones[i]++;
-            bmap.set(i);
-        }
-    }
-    bmap.updateRank();
-
-    bool works = true;
-    for (int i = 0; i < tests; i++) {
-        size_t idx = rand() % size;
-        if (bmap.wrdRank(idx) != ones[idx]) {
-            works = false;
-        }
-    }
-    test("Random wrd_rank()", works);
-    std::cout << "-----------------------------------\n";
-}
-
-void test_random_select0(size_t size, int tests)
-{
-    srand(time(0));
-    BitMap bmap(size);
-    std::vector<long> zeros(1, -1);
-    if (rand() % 2) {
-        bmap.set(0);
-    } else {
-        zeros.push_back(0);
-    }
-    for (size_t i = 1; i < size; i++) {
-        if (rand() % 2) {
-            bmap.set(i);
-        } else {
-            zeros.push_back(i);
-        }
-    }
-    bmap.updateRank();
-
-    bool works = true;
-    for (int i = 0; i < tests; i++) {
-        size_t idx = rand() % size;
-        size_t idx_1s = (idx >= zeros.size()) ? 0 : idx;
-        if (bmap.select0(idx) != zeros[idx_1s]) {
-            works = false;
-        }
-    }
-    test("Random select0()", works);
-    std::cout << "-----------------------------------\n";
-}
-
-void test_random_select1(size_t size, int tests)
+void test_random_select(size_t size, int tests)
 {
     srand(time(0));
     BitMap bmap(size);
@@ -356,7 +283,7 @@ void test_random_select1(size_t size, int tests)
     for (int i = 0; i < tests; i++) {
         size_t idx = rand() % size;
         size_t idx_1s = (idx >= ones.size()) ? 0 : idx;
-        if (bmap.select1(idx) != ones[idx_1s]) {
+        if (bmap.select(idx) != ones[idx_1s]) {
             works = false;
         }
     }
@@ -379,8 +306,7 @@ int main (void)
     test_toggle();
 
     test_rank();
-    test_select0();
-    test_select1();
+    test_select();
 
     test_toString();
     test_long_bitmap();
@@ -389,9 +315,7 @@ int main (void)
     int tests = 100;
     test_random_set_get(bmap_size, tests);
     test_random_rank(bmap_size, tests);
-    test_random_wrd_rank(bmap_size, tests);
-    test_random_select0(bmap_size, tests);
-    test_random_select1(bmap_size, tests);
+    test_random_select(bmap_size, tests);
 
     if (!failed) {
         std::cout << GREEN << "PASSED ALL TESTS" << RESET_CLR << "\n";

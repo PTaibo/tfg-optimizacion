@@ -1,10 +1,7 @@
 #!/bin/bash
 
-benchmarks=("select0"               # 0
-            "select1"               # 1
-            "rank"                  # 2
-            "select0_vs_select1"    # 3
-            "rank_vs_wrdRank")      # 4
+benchmarks=("select"                # 0
+            "rank")                 # 1
 
 to_run=(3)
 
