@@ -32,14 +32,14 @@ BitMap::BitMap(bitIdx_t size, std::string fileName, bitIdx_t bitsPerRankBlk)
     if (!file)
         throw std::invalid_argument("Couldn't open bitmap file");
     file.read((char*)_bits, bytes);
-    HANDLE_ERROR(cudaMemcpy(d_bits, _bits, _size * sizeof(word_t), cudaMemcpyHostToDevice));
+    HANDLE_ERROR(cudaMemcpy(d_bits, _bits, bytes, cudaMemcpyHostToDevice));
 
     // Initialize rank support structures
     ulong ceiling_div = (_size + d_tmp.bitsPerBlk - 1) / d_tmp.bitsPerBlk;
-    HANDLE_ERROR(cudaMalloc(&d_rankS, ceiling_div + 1 * sizeof(uint32_t)));
-    HANDLE_ERROR(cudaMemset(d_rankS, 0, ceiling_div + 1 * sizeof(uint32_t)));
-    HANDLE_ERROR(cudaMalloc(&d_lazyRank, ceiling_div + 1 * sizeof(int32_t)));
-    HANDLE_ERROR(cudaMemset(d_lazyRank, 0, ceiling_div + 1 * sizeof(int32_t)));
+    HANDLE_ERROR(cudaMalloc(&d_rankS, (ceiling_div + 1) * sizeof(uint32_t)));
+    HANDLE_ERROR(cudaMemset(d_rankS, 0, (ceiling_div + 1) * sizeof(uint32_t)));
+    HANDLE_ERROR(cudaMalloc(&d_lazyRank, (ceiling_div + 1) * sizeof(int32_t)));
+    HANDLE_ERROR(cudaMemset(d_lazyRank, 0, (ceiling_div + 1) * sizeof(int32_t)));
 }
 
 // BitMap::BitMap(const BitMap& bitmap)
@@ -306,4 +306,9 @@ std::string BitMap::toString()
     }
     return bitmap;
 }
+
+// __global__ void getBit(bitIdx_t idx, int8_t *bit, BitMap *bmap)
+// {
+//     *bit = bmap->d_get(idx);
+// }
 

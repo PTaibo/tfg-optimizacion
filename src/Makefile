@@ -11,8 +11,8 @@ cppflags.release=-O2 -march=native
 cppflags.debug=-g3 -O0 -Wextra
 CPPFLAGS=$(cppflags.$(BUILD))
 # LDLIBS=-I./polybench-includes -I${PAPI_DIR}/include
-LDLIBS=-I${PAPI_DIR}/include
-LDFLAGS=-L${PAPI_DIR}/lib -lpapi
+# LDLIBS=-I${PAPI_DIR}/include
+# LDFLAGS=-L${PAPI_DIR}/lib -lpapi
 
 %.o: %.c
 	$(CC) ${CPPFLAGS} ${LDLIBS} -c $^ -o $@
@@ -26,8 +26,8 @@ cbench: benchmark.o ${OBJ}
 bench:
 	bash ./scripts/run_benchmarks.sh
 
-ctest: test_basic.o ${OBJ}
-	$(GPP) ${CPPFLAGS} $^ -o tests.elf
+ctest: bitmap.cu test_basic.cu
+	nvcc -rdc=true $^ -o tests.elf
 
 test: ctest
 	./tests.elf

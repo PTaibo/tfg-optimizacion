@@ -36,8 +36,16 @@ void test_constructor()
     bool size = (bmap.size() == 10);
     bool all0 = true;
     int8_t bit;
+
+    BitMap *d_bmap;
+    cudaMalloc(&d_bmap, sizeof(BitMap));
+    cudaMemcpy(d_bmap, &bmap, sizeof(BitMap), cudaMemcpyHostToDevice);
+    int8_t *d_bit;
+    cudaMalloc(&d_bit, sizeof(int8_t));
+
     for (bitIdx_t i = 0; i < bmap.size(); i++) {
-        getBit<<<1,1>>>(i, &bit, &bmap);
+        getBit<<<1,1>>>(i, d_bit, d_bmap);
+        cudaMemcpy(&bit, d_bit, sizeof(int8_t), cudaMemcpyDeviceToHost);
         if (bmap.get(i) != bit) {
             all0 = false;
             break;
@@ -48,6 +56,8 @@ void test_constructor()
     test("  Size()", size);
     test("  Initialized correctly", all0);
     std::cout << "-----------------------------------\n";
+    cudaFree(d_bmap);
+    cudaFree(d_bit);
 }
 
 // void test_constructor_copy()
@@ -73,25 +83,42 @@ void test_constructor()
 
 void test_get()
 {
-    std::string bits = "01001101001101011000";
     BitMap bitmap(10, bmapFile);
     std::cout << bitmap.toString() << " <- bitmap\n";
+    std::vector<int8_t> host(10);
+    std::vector<int8_t> dev(10);
+    int8_t bit;
+
+    BitMap *d_bmap;
+    cudaMalloc(&d_bmap, sizeof(BitMap));
+    cudaMemcpy(d_bmap, &bitmap, sizeof(BitMap), cudaMemcpyHostToDevice);
+    int8_t *d_bit;
+    cudaMalloc(&d_bit, sizeof(int8_t));
 
     bool passed = true;
     for(size_t i = 0; i < bitmap.size(); i++) {
-        int8_t bit;
-        getBit<<<1,1>>>(i, &bit, &bitmap);
+        getBit<<<1,1>>>(i, d_bit, d_bmap);
+        cudaMemcpy(&bit, d_bit, sizeof(int8_t), cudaMemcpyDeviceToHost);
         if (bit != bitmap.get(i)) {
             passed = false;
         }
-        printf("%d", bit);
+        host[i] = bitmap.get(i);
+        dev[i] = bit;
     }
-    printf(" <- get()\n");
+    for (size_t i = 0; i < 10; i++)
+        printf("%d", host[i]);
+    printf(" <- host\n");
+    for (size_t i = 0; i < 10; i++)
+        printf("%d", dev[i]);
+    printf(" <- dev\n");
 
     if (!failed)
         test("Get()", passed);
     test("Get() out of bounds", bitmap.get(100) == -1);
     std::cout << "------------------------" << "\n";
+
+    cudaFree(d_bmap);
+    cudaFree(d_bit);
 }
 
 // void test_rank()
@@ -156,21 +183,28 @@ void test_get()
 void test_random_get(size_t size, int tests, std::string file)
 {
     BitMap bmap(size, file);
+    BitMap *d_bmap;
+    cudaMalloc(&d_bmap, sizeof(BitMap));
+    cudaMemcpy(d_bmap, &bmap, sizeof(BitMap), cudaMemcpyHostToDevice);
+
+    int8_t bit;
+    int8_t *d_bit;
+    cudaMalloc(&d_bit, sizeof(int8_t));
 
     bool works = true;
-    int8_t bit;
     for (int i = 0; i < tests; i++) {
         size_t idx = rand() % size;
-        getBit<<<1,1>>>(idx, &bit, &bmap);
+        getBit<<<1,1>>>(idx, d_bit, d_bmap);
+        cudaMemcpy(&bit, d_bit, sizeof(int8_t), cudaMemcpyDeviceToHost);
         if (bmap.get(idx) != bit) {
-            if (bmap.get(idx) != 1) works = false;
-        }
-        else {
-            if (bmap.get(idx) != 0) works = false;
+            works = false;
+            printf("Host: %d | Dev: %d\n", bmap.get(idx), bit);
         }
     }
     test("Random get()", works);
     std::cout << "-----------------------------------\n";
+    cudaFree(d_bmap);
+    cudaFree(d_bit);
 }
 
 // void test_random_rank(size_t size, int tests)

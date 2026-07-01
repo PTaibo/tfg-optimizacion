@@ -75,4 +75,5 @@ class BitMap
 };
 
 // CUDA KERNELS
+// __global__ void getBit(bitIdx_t idx, int8_t *bit, BitMap *bmap);
 
