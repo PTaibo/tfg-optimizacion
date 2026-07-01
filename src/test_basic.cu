@@ -60,27 +60,6 @@ void test_constructor()
     cudaFree(d_bit);
 }
 
-// void test_constructor_copy()
-// {
-//     BitMap original(10, "/dev/random");
-//     BitMap copy(original);
-//     bool size = (original.size() == copy.size());
-//     bool sameBits = true;
-//     for (bitIdx_t i = 0; i < original.size() && i < copy.size(); i++) {
-//         if (copy.get(i) != original.get(i)) {
-//             sameBits = false;
-//             break;
-//         }
-//     }
-//
-//     test("Copy constructor", size && sameBits);
-//     std::cout << "  " << original.toString() << " <- original\n";
-//     std::cout << "  " << copy.toString() << " <- copy\n";
-//     test("  Size()", size);
-//     test("  Initialized correctly", sameBits);
-//     std::cout << "------------------------" << "\n";
-// }
-
 void test_get()
 {
     BitMap bitmap(10, bmapFile);
@@ -147,36 +126,6 @@ void test_get()
 //     if (bmap.select(10) != 16) works = false;
 //     if (bmap.select(2) != 2) works = false;
 //     test("select1()", works);
-//     std::cout << "-----------------------------------\n";
-// }
-
-// void test_long_bitmap()
-// {
-//     std::string bits = "01101011101010101101010001010110101010010101001010001010101001010100100000000000111111110101001001001011010101010010100101010100100100011101001010111010100000101010011101010101011100111010001011110101010010000010101";
-//     BitMap bmap(bits);
-//     bmap.updateRank();
-//
-//     bool works = true;
-//     if (bmap.rank(28) != 15) works = false;
-//     if (bmap.rank(15) != 9) works = false;
-//     if (bmap.rank(92) != 43) works = false;
-//     if (bmap.rank(115) != 53) works = false;
-//     if (bmap.rank(8) != 6) works = false;
-//     if (bmap.rank(46) != 24) works = false;
-//     if (bmap.rank(120) != 55) works = false;
-//     if (bmap.rank(205) != 97) works = false;
-//     test("Long bitmap rank()", works);
-//
-//     works = true;
-//     if (bmap.select(14) != 25) works = false;
-//     if (bmap.select(41) != 87) works = false;
-//     if (bmap.select(59) != 128) works = false;
-//     if (bmap.select(77) != 167) works = false;
-//     if (bmap.select(1) != 1) works = false;
-//     if (bmap.select(101) != -1) works = false;
-//     if (bmap.select(96) != 201) works = false;
-//     if (bmap.select(100) != 214) works = false;
-//     test("Long bitmap select1()", works);
 //     std::cout << "-----------------------------------\n";
 // }
 
@@ -271,14 +220,11 @@ int main (void)
     tests = 0;
 
     test_constructor();
-    // test_constructor_copy();
 
     test_get();
 
     // test_rank();
     // test_select();
-
-    // test_long_bitmap();
 
     size_t bmap_size = 1000000;
     int tests = 100;

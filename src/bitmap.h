@@ -18,7 +18,6 @@ class BitMap
             size_t word_s; //!< Size in bits of word_t
             bitIdx_t size; //!< Size in bits of the bitmap
             bitIdx_t bitsPerBlk; //!< Number of bits per block of rankS (HAS TO BE MULTIPLE OF WORD_S)
-            bool changedBitmap;
         } attributes;
 
         size_t _word_s = sizeof(word_t)*8;
@@ -27,25 +26,13 @@ class BitMap
         word_t *_bits; //!< Bit vector
         word_t *d_bits; //!< Bit vector
         uint32_t *d_rankS; //!< Rank helper structure
-        int32_t *d_lazyRank; //!< Records bit changes
 
     // METHODS
-    private:
-        // @param idx Bit position between 0 and _size-1
-        // @return Word mask for the bit in that position
-        word_t getMask(bitIdx_t idx);
-        __device__ word_t d_getMask(bitIdx_t idx);
-
     public:
         // CONSTRUCTORS AND DESTRUCTORS
         // @param size Size of bitmap in bits
         // @return Bitmap initialized to 0
         BitMap(bitIdx_t size, std::string fileName, bitIdx_t bitsPerRankBlk = 0);
-        // @brief Creates a copy of bitmap
-        BitMap(const BitMap& bitmap);
-        // @param idx Position between 0 and size()-1
-        // @return Value of bit or -1 if out of bounds
-        __device__ int8_t d_get(bitIdx_t idx);
 
         ~BitMap();
 
@@ -53,13 +40,11 @@ class BitMap
         // @param idx Position between 0 and size()-1
         // @return Value of bit or -1 if out of bounds
         int8_t get(bitIdx_t idx);
+        // @param idx Position between 0 and size()-1
+        // @return Value of bit or -1 if out of bounds
+        __device__ int8_t d_get(bitIdx_t idx);
 
         // BITMAP OPERATIONS
-        // @brief Checks if there are pending changes for rankS
-        // @return True if an updateRank is necessary
-        bool rankNeedsUpdate();
-        // @brief Updates rankS using the changes stored in lazyRank
-        void updateRank();
         // @param idx Position between 0 and size()-1
         // @return Number of ones up to that idx (included)
         long rank(bitIdx_t idx);
@@ -73,7 +58,4 @@ class BitMap
         // @return Bitmap as string of 0s and 1s
         std::string toString();
 };
-
-// CUDA KERNELS
-// __global__ void getBit(bitIdx_t idx, int8_t *bit, BitMap *bmap);
 
