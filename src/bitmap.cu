@@ -51,9 +51,16 @@ BitMap::BitMap(bitIdx_t size, std::string fileName, bitIdx_t bitsPerRankBlk)
 //     _changedBitmap = bitmap._changedBitmap;
 //     _lazyRank.assign(bitmap._lazyRank.begin(), bitmap._lazyRank.end());
 // }
-//
-// BitMap::~BitMap() {}
-//
+
+BitMap::~BitMap()
+{
+    cudaFree(d_att);
+    free(_bits);
+    cudaFree(d_bits);
+    cudaFree(d_rankS);
+    cudaFree(d_lazyRank);
+}
+
 // // SINGLE BIT OPERATIONS
 BitMap::word_t BitMap::getMask(bitIdx_t idx)
 {
