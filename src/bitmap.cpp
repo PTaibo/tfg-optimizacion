@@ -152,19 +152,16 @@ long BitMap::rank(bitIdx_t idx)
     size_t lstWrd = idx/word_s;
     size_t currWrd = fstWrd;
     
-    __m256i v_bits, v_pcount;
-    __m256i v_sum = _mm256_setzero_si256();
-    for (; currWrd+7 < lstWrd; currWrd += 8) {
-        v_bits = _mm256_set_epi32(_bits[currWrd+7], _bits[currWrd+6],
-                                  _bits[currWrd+5], _bits[currWrd+4],
-                                  _bits[currWrd+3], _bits[currWrd+2],
-                                  _bits[currWrd+1], _bits[currWrd]);
-        v_pcount = _mm256_popcnt_epi32(v_bits);
-        v_sum = _mm256_add_epi32(v_sum, v_pcount);
+    __m512i v_bits, v_pcount;
+    __m512i v_sum = _mm512_setzero_si512();
+    for (; currWrd+15 < lstWrd; currWrd += 16) {
+        v_bits = _mm512_load_epi32( &_bits[currWrd] );
+        v_pcount = _mm512_popcnt_epi32(v_bits);
+        v_sum = _mm512_add_epi32(v_sum, v_pcount);
     }
-    alignas(32) uint32_t sum[8];
-    _mm256_store_si256((__m256i*)sum, v_sum);
-    for (size_t i = 0; i < 8; i++) {
+    alignas(32) uint32_t sum[16];
+    _mm512_store_si512((__m512i*)sum, v_sum);
+    for (size_t i = 0; i < 16; i++) {
         ans += sum[i];
     }
 
