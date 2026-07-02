@@ -3,18 +3,19 @@
 #include <assert.h>
 #include <immintrin.h>
 
-#define RANKBLK (20) // Default number of words per rank block
+#define RANKBLK (1) // Default number of words per rank block
 
 // CONSTRUCTORS AND DESTRUCTORS
 BitMap::BitMap(bitIdx_t size, bitIdx_t wordsPerRankBlk)
 {
     _size = size;
     if (!wordsPerRankBlk) {
-        _bitsPerBlk = RANKBLK*word_s;
+        _bitsPerBlk = RANKBLK*512;
     }
     else {
-        _bitsPerBlk = wordsPerRankBlk*word_s;
+        _bitsPerBlk = wordsPerRankBlk*512;
     }
+
     ulong rankBlkNum = (_size + _bitsPerBlk - 1) / _bitsPerBlk;
     _changedBitmap = false;
 
@@ -28,9 +29,10 @@ BitMap::BitMap(std::string bits, bitIdx_t wordsPerRankBlk)
 {
     _size = bits.size();
     if (!wordsPerRankBlk)
-        _bitsPerBlk = RANKBLK*word_s;
+        _bitsPerBlk = RANKBLK*512;
     else
-        _bitsPerBlk = wordsPerRankBlk*word_s;
+        _bitsPerBlk = wordsPerRankBlk*512;
+
     ulong rankBlkNum = (bits.size() + _bitsPerBlk - 1) / _bitsPerBlk;
     _changedBitmap = false;
 
