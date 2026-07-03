@@ -13,60 +13,53 @@
 BitMap::BitMap(bitIdx_t size, std::string fileName, bitIdx_t bitsPerRankBlk)
 {
     // Initialize attributes (size, word_s, bitsPerBlk...)
-    attributes d_tmp;
-    _size = d_tmp.size = size;
-    d_tmp.word_s = _word_s;
-    d_tmp.bitsPerBlk = bitsPerRankBlk*d_tmp.word_s;
-    if (!d_tmp.bitsPerBlk) {
-        d_tmp.bitsPerBlk = RANKBLK*d_tmp.word_s;
-    }
-    cudaMalloc(&d_att, sizeof(attributes));
-    cudaMemcpy(d_att, &d_tmp, sizeof(attributes), cudaMemcpyHostToDevice);
+    h_size = size;
+    cudaMalloc(&d_word_s, sizeof(size_t));
+    cudaMalloc(&d_size, sizeof(bitIdx_t));
+    cudaMemcpy(d_word_s, &h_word_s, sizeof(size_t), cudaMemcpyHostToDevice);
+    cudaMemcpy(d_size, &h_size, sizeof(bitIdx_t), cudaMemcpyHostToDevice);
 
     // Initialize bitmap
-    size_t bytes = ( (_size + _word_s - 1) / d_tmp.word_s ) * sizeof(word_t); // Int ceiling division: (A + B - 1) / B
-    _bits = (word_t*) malloc(bytes);
-    HANDLE_ERROR(cudaMalloc(&d_bits, bytes));
+    size_t bytes = ( (h_size + h_word_s - 1) / h_word_s ) * sizeof(word_t); // Int ceiling division: (A + B - 1) / B
+
+    h_bits = (word_t*) malloc(bytes);
     std::ifstream file(fileName, std::ios::binary);
     if (!file)
         throw std::invalid_argument("Couldn't open bitmap file");
-    file.read((char*)_bits, bytes);
-    HANDLE_ERROR(cudaMemcpy(d_bits, _bits, bytes, cudaMemcpyHostToDevice));
+    file.read((char*)h_bits, bytes);
 
-    // Initialize rank support structures
-    ulong ceiling_div = (_size + d_tmp.bitsPerBlk - 1) / d_tmp.bitsPerBlk;
-    HANDLE_ERROR(cudaMalloc(&d_rankS, (ceiling_div + 1) * sizeof(uint32_t)));
-    HANDLE_ERROR(cudaMemset(d_rankS, 0, (ceiling_div + 1) * sizeof(uint32_t)));
+    HANDLE_ERROR(cudaMalloc(&d_bits, bytes));
+    HANDLE_ERROR(cudaMemcpy(d_bits, h_bits, bytes, cudaMemcpyHostToDevice));
 }
 
 BitMap::~BitMap()
 {
-    cudaFree(d_att);
-    free(_bits);
+    cudaFree(d_word_s);
+    cudaFree(d_size);
+    free(h_bits);
     cudaFree(d_bits);
-    cudaFree(d_rankS);
 }
 
 // SINGLE BIT OPERATIONS
 int8_t BitMap::get(bitIdx_t idx)
 {
-    if (idx >= _size)
+    if (idx >= h_size)
         return -1;
 
-    bitIdx_t word = idx / _word_s;
-    bitIdx_t bit = (_word_s - 1) - (idx % _word_s); // msb - prev words
+    bitIdx_t word = idx / h_word_s;
+    bitIdx_t bit = (h_word_s - 1) - (idx % h_word_s); // msb - prev words
     word_t mask = (word_t)1 << bit; // Mask with 1 in pos bit
 
-    return (_bits[word] & mask) ? 1 : 0;
+    return (h_bits[word] & mask) ? 1 : 0;
 }
 
 __device__ int8_t BitMap::d_get(bitIdx_t idx)
 {
-    if (idx >= d_att->size)
+    if (idx >= *d_size)
         return -1;
 
-    bitIdx_t word = idx / d_att->word_s;
-    bitIdx_t bit = (d_att->word_s - 1) - (idx % d_att->word_s);
+    bitIdx_t word = idx / *d_word_s;
+    bitIdx_t bit = (*d_word_s - 1) - (idx % *d_word_s);
     word_t mask = (word_t)1 << bit;
 
     return (d_bits[word] & mask) ? 1 : 0;
@@ -133,13 +126,13 @@ __device__ int8_t BitMap::d_get(bitIdx_t idx)
 // VECTOR OPERATIONS
 bitIdx_t BitMap::size()
 {
-    return _size;
+    return h_size;
 }
 
 std::string BitMap::toString()
 {
-    std::string bitmap (_size, '0');
-    for (bitIdx_t i = 0; i < _size; i++) {
+    std::string bitmap (h_size, '0');
+    for (bitIdx_t i = 0; i < h_size; i++) {
         bitmap[i] = get(i) + '0';
     }
     return bitmap;

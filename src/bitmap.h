@@ -14,18 +14,13 @@ class BitMap
     // ATTRIBUTES
     private:
         using word_t = uint32_t; //!< Type used for bit vector
-        typedef struct {
-            size_t word_s; //!< Size in bits of word_t
-            bitIdx_t size; //!< Size in bits of the bitmap
-            bitIdx_t bitsPerBlk; //!< Number of bits per block of rankS (HAS TO BE MULTIPLE OF WORD_S)
-        } attributes;
 
-        size_t _word_s = sizeof(word_t)*8;
-        bitIdx_t _size; //!< Size in bits of the bitmap
-        attributes *d_att;
-        word_t *_bits; //!< Bit vector
+        size_t h_word_s = sizeof(word_t)*8;
+        size_t *d_word_s;
+        bitIdx_t h_size; //!< Size in bits of the bitmap
+        bitIdx_t *d_size;
+        word_t *h_bits; //!< Bit vector
         word_t *d_bits; //!< Bit vector
-        uint32_t *d_rankS; //!< Rank helper structure
 
     // METHODS
     public:
