@@ -129,6 +129,11 @@ bitIdx_t BitMap::size()
     return h_size;
 }
 
+__device__ bitIdx_t BitMap::get_d_size()
+{
+    return *d_size;
+}
+
 std::string BitMap::toString()
 {
     std::string bitmap (h_size, '0');

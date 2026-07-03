@@ -48,8 +48,10 @@ class BitMap
         long select(bitIdx_t n);
 
         // BASIC VECTOR OPERATIONS
-        // @return The size of the bitmap in bits
+        // @return The size of the bitmap in bits (CPU)
         bitIdx_t size();
+        // @return The size of the bitmap in bits (GPU)
+        __device__ bitIdx_t get_d_size();
         // @return Bitmap as string of 0s and 1s
         std::string toString();
 };
