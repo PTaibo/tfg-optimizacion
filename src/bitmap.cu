@@ -29,6 +29,9 @@ BitMap::BitMap(bitIdx_t size, std::string fileName, bitIdx_t bitsPerRankBlk)
 
     HANDLE_ERROR(cudaMalloc(&d_bits, bytes));
     HANDLE_ERROR(cudaMemcpy(d_bits, h_bits, bytes, cudaMemcpyHostToDevice));
+
+    HANDLE_ERROR(cudaMalloc(&d_bmap, sizeof(BitMap)));
+    HANDLE_ERROR(cudaMemcpy(d_bmap, this, sizeof(BitMap), cudaMemcpyHostToDevice));
 }
 
 BitMap::~BitMap()
@@ -37,6 +40,7 @@ BitMap::~BitMap()
     cudaFree(d_size);
     free(h_bits);
     cudaFree(d_bits);
+    cudaFree(d_bmap);
 }
 
 // SINGLE BIT OPERATIONS

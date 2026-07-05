@@ -17,10 +17,11 @@ class BitMap
 
         size_t h_word_s = sizeof(word_t)*8;
         size_t *d_word_s;
-        bitIdx_t h_size; //!< Size in bits of the bitmap
-        bitIdx_t *d_size;
+        bitIdx_t h_size; //!< Size in bits of the bitmap (CPU)
+        bitIdx_t *d_size; //!< Size in bits of the bitmap (GPU)
         word_t *h_bits; //!< Bit vector
         word_t *d_bits; //!< Bit vector
+        BitMap *d_bmap; //!< GPU copy of the bitmap
 
     // METHODS
     public:
