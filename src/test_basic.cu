@@ -99,21 +99,28 @@ void test_get()
     cudaFree(d_bit);
 }
 
-// void test_rank()
-// {
-//     std::string bits = "011010111010101011010100";
-//     BitMap bmap(bits);
-//     bmap.updateRank();
-//     bool works = true;
-//     if (bmap.rank(2) != 2) works = false;
-//     if (bmap.rank(7) != 5) works = false;
-//     if (bmap.rank(9) != 6) works = false;
-//     if (bmap.rank(14) != 9) works = false;
-//     if (bmap.rank(19) != 12) works = false;
-//     if (bmap.rank(22) != 13) works = false;
-//     test("rank()", works);
-//     std::cout << "-----------------------------------\n";
-// }
+void test_rank()
+{
+    BitMap bmap(24, bmapFile);
+    std::string bits = bmap.toString();
+    std::vector<int> rank(bits.size(), 0);
+    rank[0] += ( bits[0] == '1' ) ? 1 : 0;
+    for (size_t i = 1; i < bits.size(); i++) {
+        rank[i] = rank[i-1];
+        if (bits[i] == '1')
+            rank[i]++;
+    }
+
+    bool works = true;
+    if (bmap.rank(2) != rank[2]) works = false;
+    if (bmap.rank(7) != rank[7]) works = false;
+    if (bmap.rank(9) != rank[9]) works = false;
+    if (bmap.rank(14) != rank[14]) works = false;
+    if (bmap.rank(19) != rank[19]) works = false;
+    if (bmap.rank(22) != rank[22]) works = false;
+    test("rank()", works);
+    std::cout << "-----------------------------------\n";
+}
 
 void test_random_get(size_t size, int tests, std::string file)
 {
@@ -142,34 +149,29 @@ void test_random_get(size_t size, int tests, std::string file)
     cudaFree(d_bit);
 }
 
-// void test_random_rank(size_t size, int tests)
-// {
-//     srand(time(0));
-//     BitMap bmap(size);
-//     std::vector<long> ones (size);
-//     if (rand() % 2) {
-//         ones[0] = 1;
-//         bmap.set(0);
-//     }
-//     for (size_t i = 1; i < size; i++) {
-//         ones[i] = ones[i-1];
-//         if (rand() % 2) {
-//             ones[i]++;
-//             bmap.set(i);
-//         }
-//     }
-//     bmap.updateRank();
-//
-//     bool works = true;
-//     for (int i = 0; i < tests; i++) {
-//         size_t idx = rand() % size;
-//         if (bmap.rank(idx) != ones[idx]) {
-//             works = false;
-//         }
-//     }
-//     test("Random rank()", works);
-//     std::cout << "-----------------------------------\n";
-// }
+void test_random_rank(size_t size, int tests, std::string file)
+{
+    srand(time(0));
+    BitMap bmap(size, file);
+    std::string bits = bmap.toString();
+    std::vector<long> ones (size, 0);
+    ones[0] += ( bits[0] == '1' ) ? 1 : 0;
+    for (size_t i = 1; i < bits.size(); i++) {
+        ones[i] = ones[i-1];
+        if (bits[i] == '1')
+            ones[i]++;
+    }
+
+    bool works = true;
+    for (int i = 0; i < tests; i++) {
+        size_t idx = rand() % size;
+        if (bmap.rank(idx) != ones[idx]) {
+            works = false;
+        }
+    }
+    test("Random rank()", works);
+    std::cout << "-----------------------------------\n";
+}
 
 int main (void)
 {
@@ -180,12 +182,12 @@ int main (void)
 
     test_get();
 
-    // test_rank();
+    test_rank();
 
     size_t bmap_size = 1000000;
     int tests = 100;
     test_random_get(bmap_size, tests, bmapFile);
-    // test_random_rank(bmap_size, tests);
+    test_random_rank(bmap_size, tests, bmapFile);
 
     if (!failed) {
         std::cout << GREEN << "PASSED ALL TESTS" << RESET_CLR << "\n";

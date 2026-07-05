@@ -5,6 +5,8 @@
 #include <fstream>
 #include <iostream>
 #include <stdexcept>
+#include <thrust/reduce.h>
+#include <thrust/execution_policy.h>
 
 #define RANKBLK (2) // Default number of words per rank block
 
@@ -69,36 +71,52 @@ __device__ int8_t BitMap::d_get(bitIdx_t idx)
 }
 
 // BITMAP OPERATIONS
-// long BitMap::rank(bitIdx_t idx)
-// {
-//     if (idx >= _size)
-//         return -1;
-//
-//     bitIdx_t blkIdx = idx/_bitsPerBlk;
-//     bitIdx_t ans = _rankS[blkIdx];
-//     size_t fstWrd = blkIdx*(_bitsPerBlk/word_s);
-//     size_t lstWrd = idx/word_s;
-//     
-//     for (size_t currWrd = fstWrd; currWrd < lstWrd; currWrd++) {
-//         ans += POPCOUNT(_bits[currWrd]);
-//     }
-//
-//     size_t bitPosInWrd = (idx+1) & (word_s - 1);
-//     ans += POPCOUNT(_bits[lstWrd] >> (word_s - bitPosInWrd));
-//
-//     return ans;
-// }
-
-// VECTOR OPERATIONS
-bitIdx_t BitMap::size()
+__global__ void d_pcnt(BitMap *bmap, long *wrdPcnt, size_t numWords)
 {
-    return h_size;
+    size_t w = blockIdx.x * blockDim.x + threadIdx.x;
+    size_t jump = blockDim.x * gridDim.x;
+    for (; w < numWords; w += jump) {
+        wrdPcnt[w] = __popc(bmap->bits(w));
+    }
+}
+
+long BitMap::rank(bitIdx_t idx)
+{
+    size_t numWords = (idx + 1) / h_word_s;
+    long ans = 0;
+
+    if (numWords > 0) {
+        long *d_wrdPcnt;
+
+        cudaMalloc(&d_wrdPcnt, numWords * sizeof(long));
+
+        int thrdsPerBlk = 256;
+        int blks = (numWords + thrdsPerBlk - 1) / thrdsPerBlk;
+        d_pcnt<<<blks, thrdsPerBlk>>>(d_bmap, d_wrdPcnt, numWords);
+
+        ans = thrust::reduce(thrust::device, d_wrdPcnt,
+                             d_wrdPcnt + numWords, 0L,
+                             thrust::plus<long>());
+
+        cudaFree(d_wrdPcnt);
+    }
+
+    size_t bitInWrd = (idx+1) % h_word_s;
+    if (bitInWrd > 0)
+        ans += POPCOUNT(h_bits[numWords] >> (h_word_s - bitInWrd));
+    
+    return ans;
 }
 
 // UTILS
 bitIdx_t BitMap::size()
 {
     return h_size;
+}
+
+__device__ BitMap::word_t BitMap::bits(size_t idx)
+{
+    return d_bits[idx];
 }
 
 std::string BitMap::toString()
