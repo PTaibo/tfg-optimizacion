@@ -2,7 +2,6 @@
 #include "cuda_utils.h"
 
 #include <assert.h>
-#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <stdexcept>
@@ -85,43 +84,6 @@ __device__ int8_t BitMap::d_get(bitIdx_t idx)
 //
 //     return ans;
 // }
-//
-// long BitMap::select(bitIdx_t n)
-// {
-//     if (n < 1 || _rankS.back() < n)
-//         return -1;
-//
-//     // Binary search in rank structure
-//     int l = -1;
-//     int r = _rankS.size();
-//     while (r > l+1) {
-//         int m = (l+r)/2;
-//         if (_rankS[m] < n) {
-//             l = m;
-//         }
-//         else {
-//             r = m;
-//         }
-//     }
-//     bitIdx_t cnt = _rankS[l];
-//     bitIdx_t currBit = _bitsPerBlk*l;
-//     if (cnt == n)
-//         return currBit-1;
-//
-//     size_t wrd = (currBit + word_s - 1) / word_s;
-//     for (; cnt < n; wrd++) {
-//         cnt += POPCOUNT(_bits[wrd]);
-//     }
-//     cnt -= POPCOUNT(_bits[--wrd]);
-//
-//     for (currBit = wrd*word_s; cnt < n; currBit++) {
-//         if (get(currBit) == 1) {
-//             cnt++;
-//         }
-//     }    
-//
-//     return currBit-1;
-// }
 
 // VECTOR OPERATIONS
 bitIdx_t BitMap::size()
@@ -129,9 +91,10 @@ bitIdx_t BitMap::size()
     return h_size;
 }
 
-__device__ bitIdx_t BitMap::get_d_size()
+// UTILS
+bitIdx_t BitMap::size()
 {
-    return *d_size;
+    return h_size;
 }
 
 std::string BitMap::toString()

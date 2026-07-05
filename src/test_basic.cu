@@ -3,7 +3,6 @@
 #include <string>
 #include <assert.h>
 #include <iostream>
-#include <set>
 
 #include "utils.h"
 
@@ -115,19 +114,6 @@ void test_get()
 //     test("rank()", works);
 //     std::cout << "-----------------------------------\n";
 // }
-//
-// void test_select()
-// {
-//     std::string bits = "011010111010101011010100";
-//     BitMap bmap(bits);
-//     bmap.updateRank();
-//     bool works = true;
-//     if (bmap.select(3) != 4) works = false;
-//     if (bmap.select(10) != 16) works = false;
-//     if (bmap.select(2) != 2) works = false;
-//     test("select1()", works);
-//     std::cout << "-----------------------------------\n";
-// }
 
 void test_random_get(size_t size, int tests, std::string file)
 {
@@ -185,35 +171,6 @@ void test_random_get(size_t size, int tests, std::string file)
 //     std::cout << "-----------------------------------\n";
 // }
 
-// void test_random_select(size_t size, int tests)
-// {
-//     srand(time(0));
-//     BitMap bmap(size);
-//     std::vector<long> ones(1, -1);
-//     if (rand() % 2) {
-//         ones.push_back(0);
-//         bmap.set(0);
-//     }
-//     for (size_t i = 1; i < size; i++) {
-//         if (rand() % 2) {
-//             ones.push_back(i);
-//             bmap.set(i);
-//         }
-//     }
-//     bmap.updateRank();
-//
-//     bool works = true;
-//     for (int i = 0; i < tests; i++) {
-//         size_t idx = rand() % size;
-//         size_t idx_1s = (idx >= ones.size()) ? 0 : idx;
-//         if (bmap.select(idx) != ones[idx_1s]) {
-//             works = false;
-//         }
-//     }
-//     test("Random select1()", works);
-//     std::cout << "-----------------------------------\n";
-// }
-
 int main (void)
 {
     failed = 0;
@@ -224,13 +181,11 @@ int main (void)
     test_get();
 
     // test_rank();
-    // test_select();
 
     size_t bmap_size = 1000000;
     int tests = 100;
     test_random_get(bmap_size, tests, bmapFile);
     // test_random_rank(bmap_size, tests);
-    // test_random_select(bmap_size, tests);
 
     if (!failed) {
         std::cout << GREEN << "PASSED ALL TESTS" << RESET_CLR << "\n";

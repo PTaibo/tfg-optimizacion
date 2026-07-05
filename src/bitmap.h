@@ -47,11 +47,12 @@ class BitMap
         // @return Position of the bit or -1 if not found
         long select(bitIdx_t n);
 
-        // BASIC VECTOR OPERATIONS
+        // UTILS
         // @return The size of the bitmap in bits (CPU)
         bitIdx_t size();
-        // @return The size of the bitmap in bits (GPU)
-        __device__ bitIdx_t get_d_size();
+        // @param idx Position between 0 and bits.size() - 1
+        // @return Word_t element in that position of the array
+        __device__ word_t bits(size_t idx);
         // @return Bitmap as string of 0s and 1s
         std::string toString();
 };
