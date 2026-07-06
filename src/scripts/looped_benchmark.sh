@@ -8,7 +8,6 @@ CYAN='\033[0;36m'
 NC='\033[0m' # No colour
 
 wordBits=(32 64)
-# wordMult=(1 2 3 4 5 10 15 20 25 30 35 100 200)
 wordMult=(1 2 10 20 30 100)
 
 cp $CODE/bitmap.h $CODE/bitmap.h.bckp
@@ -18,22 +17,16 @@ for bits in "${wordBits[@]}"; do
     echo "$bits bit word"
     sed -i "/using word_t = / s/uint[0-9]\+_t/uint${bits}_t/" $CODE/bitmap.h > /dev/null
 
-    for blk in "${bitsPerBlk[@]}"; do
-        echo "$blk bits per rank block"
-        sed -i "/#define RANKBLK / s/[0-9]\+/${blk}/" $CODE/bitmap.cpp
-
-        make -f $CODE/Makefile cleanall > /dev/null
-        make -f $CODE/Makefile cbench &> /dev/null
-        $CODE/benchmark.elf $1 $2
-    done
-
     for words in "${wordMult[@]}"; do
         echo "$words word per rank block"
         sed -i "/#define RANKBLK / s/[0-9]\+/${words}/" $CODE/bitmap.cpp
-
         make -f $CODE/Makefile cleanall > /dev/null
         make -f $CODE/Makefile cbench &> /dev/null
-        $CODE/benchmark.elf $1 $2
+
+        for i in $(seq 0 100); do
+            echo "Run $i ($bits $words)"
+            $CODE/benchmark.elf $1 $2
+        done
     done
 
     echo "-------------------"

@@ -1,5 +1,6 @@
 #include "bitmap.h"
 
+#include <cstdlib>
 #include <iostream>
 
 #include "utils.h"
@@ -31,9 +32,10 @@ void benchmark_select0(size_t size, int runs)
     std::cout << "Select0 (s): ";
 }
 
-void benchmark_select1(size_t size, int runs)
+void benchmark_select1(size_t size, int runs, unsigned int seed)
 {
-    srand(time(0));
+    // srand(time(0));
+    srand(seed);
     BitMap bmap(size);
     for (size_t i = 0; i < size; i++) {
         if (rand() % 2) {
@@ -42,11 +44,29 @@ void benchmark_select1(size_t size, int runs)
     }
     bmap.updateRank();
 
+    int event_set = PAPI_NULL;
+    long long values[1];
+    int retval = PAPI_create_eventset(&event_set);
+    papi_handle_error(retval);
+
+    const char *event_name = "UNHALTED_CORE_CYCLES";
+    retval = PAPI_add_named_event(event_set, event_name);
+    papi_handle_error(retval);
+
+    retval = PAPI_start(event_set);
+    papi_handle_error(retval);
     for (int i = 0; i < runs; i++) {
         size_t idx = rand() % size;
         bmap.select1(idx);
     }
-    std::cout << "Select1 (s): ";
+    retval = PAPI_read(event_set, &values[0]);
+    papi_handle_error(retval);
+
+    // std::cout << "Select1 (s): ";
+    printf("Unhalted clock cycles (select1): %lld\n", values[0]);
+
+    retval = PAPI_stop(event_set, NULL);
+    papi_handle_error(retval);
 }
 
 void benchmark_select_compare(size_t size, int runs)
@@ -73,9 +93,10 @@ void benchmark_select_compare(size_t size, int runs)
     std::cout << "Select1 (s): ";
 }
 
-void benchmark_rank(size_t size, int runs)
+void benchmark_rank(size_t size, int runs, unsigned int seed)
 {
-    srand(time(0));
+    // srand(time(0));
+    srand(seed);
     BitMap bmap(size);
     for (size_t i = 0; i < size; i++) {
         if (rand() % 2) {
@@ -136,8 +157,9 @@ void benchmark_rank_compare(size_t size, int runs)
 
 int main (int argc, char *argv[])
 {
-    if (argc < 2) {
-        printf("No se ha indicado el benchmark a ejecutar\n");
+    if (argc < 3) {
+        // printf("No se ha indicado el benchmark a ejecutar\n");
+        printf("No se ha indicado el benchmark a ejecutar o la semilla\n");
         return 1;
     }
 
@@ -155,10 +177,10 @@ int main (int argc, char *argv[])
             benchmark_select0(bmap_size, runs);
             break;
         case 1:
-            benchmark_select1(bmap_size, runs);
+            benchmark_select1(bmap_size, runs, atoi(argv[2]));
             break;
         case 2:
-            benchmark_rank(bmap_size, runs);
+            benchmark_rank(bmap_size, runs, atoi(argv[2]));
             break;
         case 3:
             benchmark_select_compare(bmap_size_small, runs_small);
