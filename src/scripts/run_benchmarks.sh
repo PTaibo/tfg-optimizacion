@@ -14,6 +14,6 @@ echo ""
 for i in ${to_run[@]}; do
 # for ((i = 0; i < ${#to_run[@]}; i++)); do
     echo "Running ${benchmarks[$i]}"
-    bash $BITMAP_PATH/src/scripts/single_benchmark.sh $i | tee $BITMAP_PATH/benchmarks/${benchmarks[$i]}_simd.txt
+    bash $BITMAP_PATH/src/scripts/looped_benchmark.sh $i | tee $BITMAP_PATH/benchmarks/${benchmarks[$i]}_simd.txt
 done
 
