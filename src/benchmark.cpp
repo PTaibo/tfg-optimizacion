@@ -37,6 +37,11 @@ void benchmark_rank(size_t size, int runs)
     retval = PAPI_add_named_event(event_set, event_name);
     papi_handle_error(retval);
 
+    // Warmup
+    for (int i = 0; i < 10; i++) {
+        bmap.rank(idx[i]);
+    }
+
     retval = PAPI_start(event_set);
     papi_handle_error(retval);
     for (int i = 0; i < runs; i++) {
