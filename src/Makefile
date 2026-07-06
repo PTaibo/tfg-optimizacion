@@ -8,7 +8,8 @@ BUILD=release
 cppflags.release=-O2 -march=native
 cppflags.debug=-g3 -O0 -Wextra
 CPPFLAGS=$(cppflags.$(BUILD)) -Wall
-LDLIBS=-I./includes
+LDLIBS=-I${PAPI_DIR}/include
+LDFLAGS=-L${PAPI_DIR}/lib -lpapi
 
 BENCH=0
 
@@ -19,7 +20,7 @@ BENCH=0
 	$(GPP) ${CPPFLAGS} ${LDLIBS} -c $^ -o $@
 
 cbench: benchmark.o ${OBJ}
-	$(GPP) ${CPPFLAGS} -D POLYBENCH_TIME $^ -o benchmark.elf
+	$(GPP) ${CPPFLAGS} ${LDFLAGS} $^ -o benchmark.elf
 
 bench:
 	bash ./scripts/run_benchmarks.sh

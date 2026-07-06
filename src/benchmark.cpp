@@ -3,27 +3,14 @@
 #include <iostream>
 
 #include "utils.h"
-#include "polybench.h"
+#include <papi.h>
 
-void benchmark_select1(size_t size, int runs)
+void papi_handle_error(int retval)
 {
-    srand(time(0));
-    BitMap bmap(size);
-    for (size_t i = 0; i < size; i++) {
-        if (rand() % 2) {
-            bmap.set(i);
-        }
+    if (retval != PAPI_OK) {
+        printf("PAPI error %d: %s\n", retval, PAPI_strerror(retval));
+        exit(1);
     }
-    bmap.updateRank();
-
-    polybench_start_instruments;
-    for (int i = 0; i < runs; i++) {
-        size_t idx = rand() % size;
-        bmap.select1(idx);
-    }
-    polybench_stop_instruments;
-    std::cout << "Select1 (s): ";
-    polybench_print_instruments;
 }
 
 void benchmark_rank(size_t size, int runs)
@@ -37,15 +24,31 @@ void benchmark_rank(size_t size, int runs)
     }
     bmap.updateRank();
 
-    // std::vector<size_t> idx(runs);
-    polybench_start_instruments;
+    std::vector<size_t> idx(runs);
+    for (size_t i = 0; i < runs; i++)
+        idx[i] = rand() % size;
+
+    int event_set = PAPI_NULL;
+    long long values[1];
+    int retval = PAPI_create_eventset(&event_set);
+    papi_handle_error(retval);
+
+    const char *event_name = "UNHALTED_CORE_CYCLES";
+    retval = PAPI_add_named_event(event_set, event_name);
+    papi_handle_error(retval);
+
+    retval = PAPI_start(event_set);
+    papi_handle_error(retval);
     for (int i = 0; i < runs; i++) {
-        size_t idx = rand() % size;
-        bmap.rank(idx);
+        bmap.rank(idx[i]);
     }
-    polybench_stop_instruments;
-    std::cout << "Rank (s): ";
-    polybench_print_instruments;
+    retval = PAPI_read(event_set, &values[0]);
+    papi_handle_error(retval);
+
+    printf("Unhalted clock cycles: %lld\n", values[0]);
+
+    retval = PAPI_stop(event_set, NULL);
+    papi_handle_error(retval);
 }
 
 int main (int argc, char *argv[])
@@ -55,15 +58,14 @@ int main (int argc, char *argv[])
         return 1;
     }
 
-    polybench_prepare_instruments();
+    int retval = PAPI_library_init(PAPI_VER_CURRENT);
+    if (retval < 0 || retval != PAPI_VER_CURRENT)
+        papi_handle_error(retval);
+
+    // polybench_prepare_instruments();
     size_t bmap_size = 1000000000;
     int runs = 100000;
-    size_t bmap_size_small = 1000000000;
-    int runs_small = 1000;
     switch (atoi(argv[1])) {
-        case 0:
-            benchmark_select1(bmap_size, runs);
-            break;
         case 1:
             benchmark_rank(bmap_size, runs);
             break;
