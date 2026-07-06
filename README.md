@@ -54,3 +54,8 @@ For the comparison benchmarks you need to run the appropriate python script.
 - Calculates rank using CUDA instructions
 - Does not use rank support structure
 
+### Dependencies
+- Polybench library: for the time counters in the benchmark [GitHub](https://github.com/MatthiasJReisinger/PolyBenchC-4.2.1)
+- PAPI library: for the unhalted core cycles counters in the benchmark [GitHub](https://github.com/icl-utk-edu/papi)
+- Thrust library: for the reduction in the CUDA implemented rank method [NVIDIA page](https://developer.nvidia.com/thrust)
+
