@@ -105,7 +105,10 @@ void benchmark_rank(size_t size, int runs, unsigned int seed)
     }
     bmap.updateRank();
 
-    // std::vector<size_t> idx(runs);
+    std::vector<size_t> idx(runs);
+    for (int i = 0; i < runs; i++)
+        idx[i] = rand() % size;
+    
     int event_set = PAPI_NULL;
     long long values[1];
     int retval = PAPI_create_eventset(&event_set);
@@ -114,12 +117,15 @@ void benchmark_rank(size_t size, int runs, unsigned int seed)
     const char *event_name = "UNHALTED_CORE_CYCLES";
     retval = PAPI_add_named_event(event_set, event_name);
     papi_handle_error(retval);
+
+    // Warmup
+    for (int i = 0; i < 10; i++)
+        bmap.rank(idx[i]);
     
     retval = PAPI_start(event_set);
     papi_handle_error(retval);
     for (int i = 0; i < runs; i++) {
-        size_t idx = rand() % size;
-        bmap.rank(idx);
+        bmap.rank(idx[i]);
     }
     retval = PAPI_read(event_set, &values[0]);
     papi_handle_error(retval);
