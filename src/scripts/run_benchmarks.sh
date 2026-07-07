@@ -1,9 +1,8 @@
 #!/bin/bash
 
-benchmarks=("select"                # 0
-            "rank")                 # 1
+benchmarks=("rank")                 # 0
 
-to_run=(3)
+to_run=(0)
 
 echo "Benchmarks to run:"
 for i in ${to_run[@]}; do
@@ -11,9 +10,13 @@ for i in ${to_run[@]}; do
 done
 echo ""
 
+SEED=15420
+echo -e "La semilla es ${SEED}"
+echo ""
+
 for i in ${to_run[@]}; do
 # for ((i = 0; i < ${#to_run[@]}; i++)); do
     echo "Running ${benchmarks[$i]}"
-    bash $BITMAP_PATH/src/scripts/single_benchmark.sh $i | tee $BITMAP_PATH/benchmarks/${benchmarks[$i]}.txt
+    bash $BITMAP_PATH/src/scripts/looped_benchmark.sh $i $SEED | tee $BITMAP_PATH/benchmarks/${benchmarks[$i]}_cuda.txt
 done
 
