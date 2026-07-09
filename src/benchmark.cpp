@@ -193,6 +193,7 @@ int main (int argc, char *argv[])
             break;
         case 4:
             benchmark_rank_compare(bmap_size, runs);
+            break;
         default:
             return 2;
     }
