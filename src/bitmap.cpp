@@ -3,7 +3,7 @@
 #include <assert.h>
 #include <immintrin.h>
 
-#define RANKBLK (1) // Default number of words per rank block
+#define RANKBLK (2) // Default number of words per rank block
 
 // CONSTRUCTORS AND DESTRUCTORS
 BitMap::BitMap(bitIdx_t size, bitIdx_t wordsPerRankBlk)

@@ -11,9 +11,16 @@ for i in ${to_run[@]}; do
 done
 echo ""
 
+SEED=15420
+echo -e "Seed is ${SEED}"
+echo ""
+
 for i in ${to_run[@]}; do
 # for ((i = 0; i < ${#to_run[@]}; i++)); do
     echo "Running ${benchmarks[$i]}"
-    bash $BITMAP_PATH/src/scripts/looped_benchmark.sh $i | tee $BITMAP_PATH/benchmarks/${benchmarks[$i]}_simd.txt
+
+    # bash $BITMAP_PATH/src/scripts/looped_benchmark_blkSize.sh $i $SEED | tee $BITMAP_PATH/benchmarks/${benchmarks[$i]}_simd.txt
+
+    bash $BITMAP_PATH/src/scripts/looped_benchmark_bmapSize.sh $i $SEED | tee $BITMAP_PATH/benchmarks/${benchmarks[$i]}_simd_bmapSize.txt
 done
 
