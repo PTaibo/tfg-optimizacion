@@ -7,7 +7,7 @@ BLUE='\033[0;34m'
 CYAN='\033[0;36m'
 NC='\033[0m' # No colour
 
-wordMult=(1 2 10 20 30 100)
+bmapSizes=(100 1000 10000 100000 1000000 10000000 100000000 1000000000)
 
 # Command to create random bitmap file to test against
 # It takes long to create, so it's recommended to run once
@@ -17,15 +17,15 @@ wordMult=(1 2 10 20 30 100)
 cp $CODE/bitmap.h $CODE/bitmap.h.bckp
 cp $CODE/bitmap.cu $CODE/bitmap.cu.bckp
 
-for words in "${wordMult[@]}"; do
-    echo "$words word per rank block"
-    sed -i "/#define RANKBLK / s/[0-9]\+/${words}/" $CODE/bitmap.cu
+for size in "${bmapSizes[@]}"; do
+    echo "$size elements in bitmap"
+    sed -i "s/\(size_t bmap_size = \)[0-9]\+/\1${size}/" benchmark.cu
 
     make -f $CODE/Makefile cleanall > /dev/null
     make -f $CODE/Makefile cbench &> /dev/null
 
     for i in $(seq 0 99); do
-        echo "Run $i ($words)"
+        echo "Run $i ($size)"
         $CODE/benchmark.elf $1 $2
     done
 done

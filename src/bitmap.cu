@@ -8,8 +8,6 @@
 #include <thrust/reduce.h>
 #include <thrust/execution_policy.h>
 
-#define RANKBLK (2) // Default number of words per rank block
-
 // CONSTRUCTORS AND DESTRUCTORS
 BitMap::BitMap(bitIdx_t size, std::string fileName, bitIdx_t bitsPerRankBlk)
 {
