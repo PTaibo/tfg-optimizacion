@@ -8,7 +8,11 @@ CYAN='\033[0;36m'
 NC='\033[0m' # No colour
 
 wordMult=(1 2 10 20 30 100)
-dd if=/dev/random of=$CODE/bitmap.bin bs=1 count=125000000
+
+# Command to create random bitmap file to test against
+# It takes long to create, so it's recommended to run once
+# before the first benchmark and reuse it
+# dd if=/dev/random of=$CODE/bitmap.bin bs=1 count=125000000
 
 cp $CODE/bitmap.h $CODE/bitmap.h.bckp
 cp $CODE/bitmap.cu $CODE/bitmap.cu.bckp

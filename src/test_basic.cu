@@ -9,7 +9,7 @@
 int failed = 0;
 int tests = 0;
 
-std::string bmapFile = "/dev/random";
+std::string bmapFile = "/dev/urandom";
 
 void test(std::string msg, bool correct)
 {
