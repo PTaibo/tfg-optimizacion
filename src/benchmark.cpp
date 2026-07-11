@@ -2,8 +2,16 @@
 
 #include <cstdlib>
 #include <iostream>
-
 #include "utils.h"
+
+#define TIME
+
+#ifdef TIME
+#include <chrono>
+using namespace std::chrono;
+#endif
+
+#ifdef PAPI
 #include <papi.h>
 
 void papi_handle_error(int retval)
@@ -13,6 +21,7 @@ void papi_handle_error(int retval)
         exit(1);
     }
 }
+#endif
 
 void benchmark_select0(size_t size, int runs)
 {
@@ -44,6 +53,7 @@ void benchmark_select1(size_t size, int runs, unsigned int seed)
     }
     bmap.updateRank();
 
+#ifdef PAPI
     int event_set = PAPI_NULL;
     long long values[1];
     int retval = PAPI_create_eventset(&event_set);
@@ -55,10 +65,14 @@ void benchmark_select1(size_t size, int runs, unsigned int seed)
 
     retval = PAPI_start(event_set);
     papi_handle_error(retval);
+#endif
+
     for (int i = 0; i < runs; i++) {
         size_t idx = rand() % size;
         bmap.select1(idx);
     }
+
+#ifdef PAPI
     retval = PAPI_read(event_set, &values[0]);
     papi_handle_error(retval);
 
@@ -67,6 +81,7 @@ void benchmark_select1(size_t size, int runs, unsigned int seed)
 
     retval = PAPI_stop(event_set, NULL);
     papi_handle_error(retval);
+#endif
 }
 
 void benchmark_select_compare(size_t size, int runs)
@@ -108,7 +123,12 @@ void benchmark_rank(size_t size, int runs, unsigned int seed)
     std::vector<size_t> idx(runs);
     for (int i = 0; i < runs; i++)
         idx[i] = rand() % size;
+
+    // Warmup
+    for (int i = 0; i < 10; i++)
+        bmap.rank(idx[i]);
     
+#ifdef PAPI
     int event_set = PAPI_NULL;
     long long values[1];
     int retval = PAPI_create_eventset(&event_set);
@@ -117,24 +137,35 @@ void benchmark_rank(size_t size, int runs, unsigned int seed)
     const char *event_name = "UNHALTED_CORE_CYCLES";
     retval = PAPI_add_named_event(event_set, event_name);
     papi_handle_error(retval);
-
-    // Warmup
-    for (int i = 0; i < 10; i++)
-        bmap.rank(idx[i]);
     
     retval = PAPI_start(event_set);
     papi_handle_error(retval);
+#endif
+
+#ifdef TIME
+    auto start = high_resolution_clock::now();
+#endif
+
+    // BENCHMARKED CODE
     for (int i = 0; i < runs; i++) {
         bmap.rank(idx[i]);
     }
+
+#ifdef TIME
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(stop - start);
+    std::cout << duration.count() << " us\n";
+#endif
+
+#ifdef PAPI
     retval = PAPI_read(event_set, &values[0]);
     papi_handle_error(retval);
     
-    // std::cout << "Rank (s): ";
     printf("Unhalted clock cycles: %lld\n", values[0]);
 
     retval = PAPI_stop(event_set, NULL);
     papi_handle_error(retval);
+#endif
 }
 
 void benchmark_rank_compare(size_t size, int runs)
@@ -169,13 +200,20 @@ int main (int argc, char *argv[])
         return 1;
     }
 
-    // Init PAPI
+    int runs;
+
+#ifdef PAPI
     int retval = PAPI_library_init(PAPI_VER_CURRENT);
     if (retval < 0 || retval != PAPI_VER_CURRENT)
         papi_handle_error(retval);
+    
+    runs = 100000;
+#endif
+#ifdef TIME
+    runs = 100000; // ~Reduce runs for chrono benchmark~. To fast
+#endif
 
     size_t bmap_size = 1000000000;
-    int runs = 100000;
     size_t bmap_size_small = 1000000000;
     int runs_small = 1000;
     switch (atoi(argv[1])) {
