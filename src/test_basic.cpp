@@ -113,7 +113,7 @@ void test_set()
     test("Set()", bitmap.get(0) == 1);
     assert(bitmap.set(1) == 1);
     test("Double set()", bitmap.get(1) == 1);
-    test("Set() out of bounds", bitmap.set(100) == 0);
+    test("Set() out of bounds", bitmap.set(100) == -1);
     std::cout << "------------------------" << "\n";
 }
 
@@ -124,7 +124,7 @@ void test_clear()
     test("Clear()", bitmap.get(1) == 0);
     assert(bitmap.clear(0) == 1);
     test("Double clear()", bitmap.get(0) == 0);
-    test("Clear() out of bounds", bitmap.clear(100) == 0);
+    test("Clear() out of bounds", bitmap.clear(100) == -1);
     std::cout << "------------------------" << "\n";
 }
 

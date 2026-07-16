@@ -73,7 +73,7 @@ int8_t BitMap::get(bitIdx_t idx)
 int8_t BitMap::set(bitIdx_t idx)
 {
     if (idx >= _size)
-        return 0;
+        return -1;
 
     bitIdx_t word = idx / word_s;
     word_t mask = getMask(idx);
@@ -87,7 +87,7 @@ int8_t BitMap::set(bitIdx_t idx)
 int8_t BitMap::clear(bitIdx_t idx)
 {
     if (idx >= _size)
-        return 0;
+        return -1;
 
     bitIdx_t word = idx / word_s;
     word_t mask = ~getMask(idx);
