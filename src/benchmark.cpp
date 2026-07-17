@@ -96,16 +96,60 @@ void benchmark_select_compare(size_t size, int runs)
     bmap.updateRank();
 
     std::vector<size_t> idx(runs);
-    for (int i = 0; i < runs; i++) {
+    for (int i = 0; i < runs; i++)
         idx[i] = rand() % size;
+
+    // Warmup
+    for (int i = 0; i < 10; i++) {
+        bmap.select0(idx[i]);
+        bmap.select1(idx[i]);
+    }
+
+#ifdef PAPI
+    int event_set = PAPI_NULL;
+    long long values[1];
+    int retval = PAPI_create_eventset(&event_set);
+    papi_handle_error(retval);
+
+    const char *event_name = "UNHALTED_CORE_CYCLES";
+    retval = PAPI_add_named_event(event_set, event_name);
+    papi_handle_error(retval);
+    
+    retval = PAPI_start(event_set);
+    papi_handle_error(retval);
+#endif
+
+    for (int i = 0; i < runs; i++) {
         bmap.select0(idx[i]);
     }
-    std::cout << "Select0 (s): ";
+
+#ifdef PAPI
+    retval = PAPI_read(event_set, &values[0]);
+    papi_handle_error(retval);
+    
+    printf("Select0: Unhalted clock cycles: %lld\n", values[0]);
+
+    event_set = PAPI_NULL;
+    retval = PAPI_add_named_event(event_set, event_name);
+    papi_handle_error(retval);
+
+    retval = PAPI_start(event_set);
+    papi_handle_error(retval);
+#endif
 
     for (int i = 0; i < runs; i++) {
         bmap.select1(idx[i]);
     }
-    std::cout << "Select1 (s): ";
+
+#ifdef PAPI
+    retval = PAPI_read(event_set, &values[0]);
+    papi_handle_error(retval);
+    
+    printf("Select1: Unhalted clock cycles: %lld\n", values[0]);
+
+    retval = PAPI_stop(event_set, NULL);
+    papi_handle_error(retval);
+#endif
 }
 
 void benchmark_rank(size_t size, int runs, unsigned int seed)
