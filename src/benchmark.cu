@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) 2026 Paula Taibo Suárez
+ * Licensed under the MIT License
+*/
+
 #include "bitmap.h"
 
 #include <iostream>
