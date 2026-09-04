@@ -1,3 +1,8 @@
+#
+# Copyright (C) 2026 Paula Taibo Suárez
+# Licensed under the MIT License
+#
+
 GPP=g++
 
 CSRC=$(wildcard includes/*.c)
