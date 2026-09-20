@@ -20,7 +20,7 @@ def parse_file(file_name):
                 val = re.search(r'\d+', line)
                 if val:
                     current_words = int(val.group())
-            elif "Unhalted clock cycles:" in line:
+            elif "Unhalted clock cycles" in line:
                 val = re.search(r':\s*(\d+)', line)
                 if val:
                     cycles = int(val.group(1))
