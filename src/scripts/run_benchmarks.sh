@@ -1,9 +1,8 @@
+#!/bin/bash
 #
 # Copyright (C) 2026 Paula Taibo Suárez
 # Licensed under the MIT License
 #
-
-#!/bin/bash
 
 benchmarks=("select1"               # 0
             "rank")                 # 1
